@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,6 @@ import { companyData } from "@/data/company";
 import { getPhotoIdWhatsAppUrl } from "@/lib/whatsapp";
 import {
   Search,
-  ShieldCheck,
   ArrowRight,
   ArrowLeft,
   Camera,
@@ -17,63 +16,51 @@ import {
   Cpu,
   Compass,
   Zap,
-  CheckCircle2,
-  Info,
+  Play,
+  Sliders,
+  ShieldCheck,
 } from "lucide-react";
 
-interface Hotspot {
+interface CinematicScene {
   id: string;
-  xPercent: number; // percentage from left
-  yPercent: number; // percentage from top
-  title: { en: string; ar: string };
-  spec: { en: string; ar: string };
+  image: string;
   badge: { en: string; ar: string };
+  title: { en: string; ar: string };
+  subtitle: { en: string; ar: string };
 }
 
-const hotspots: Hotspot[] = [
+const cinematicScenes: CinematicScene[] = [
   {
-    id: "sheave",
-    xPercent: 62,
-    yPercent: 26,
-    title: { en: "Traction Sheave", ar: "طارة الجر الرئيسية" },
-    spec: {
-      en: "400mm QT450 Hardened Ductile Iron | 4×10mm / 5×8mm Grooves",
-      ar: "حديد مقسى عالي المتانة 400 مم | مجاري حبال 4×10 مم أو 5×8 مم",
+    id: "traction",
+    image: "/images/hero/cinematic_traction_macro.jpg",
+    badge: {
+      en: "SCENE 01 // TRACTION & HOIST PROPULSION",
+      ar: "المشهد 01 // منظومة الجر وحبال الرفع الفائقة",
     },
-    badge: { en: "EN 12385 Ropes", ar: "حبال معتمدة EN 12385" },
+    title: {
+      en: "Heavy-Duty Traction Sheaves & Steel Cables",
+      ar: "طارات الجر المقساة وحبال الصلب المعتمدة",
+    },
+    subtitle: {
+      en: "Precision-grooved sheaves and EN 12385 certified steel wire ropes ready for high-speed elevators.",
+      ar: "طارات مصنعة بأعلى درجات الدقة وحبال صلب مطابقة للمواصفات الأوروبية للمصاعد فائقة السرعة.",
+    },
   },
   {
-    id: "brake",
-    xPercent: 78,
-    yPercent: 52,
-    title: { en: "Dual-Disc Safety Brake", ar: "فرامل أمان قرصية مزدوجة" },
-    spec: {
-      en: "Redundant 24V DC Electromagnetic Spring-Applied Fail-Safe",
-      ar: "منظومة كهرومغناطيسية مزدوجة 24V DC للطوارئ والانقطاع",
+    id: "architectural",
+    image: "/images/hero/cinematic_glass_lift_ascent.jpg",
+    badge: {
+      en: "SCENE 02 // ARCHITECTURAL ELEVATION & CABINS",
+      ar: "المشهد 02 // كبائن الركاب والارتفاع المعماري",
     },
-    badge: { en: "EN 81-20 Compliant", ar: "مطابق لمعيار EN 81-20" },
-  },
-  {
-    id: "motor",
-    xPercent: 32,
-    yPercent: 38,
-    title: { en: "PMSM Motor Core", ar: "قلب محرك التزامن المغناطيسي" },
-    spec: {
-      en: "Rare-Earth NdFeB Magnets | Class F Insulation | 1000kg @ 1.75m/s",
-      ar: "مغناطيس دائم NdFeB فائق العزم | عزل فئة F | حمولة 1000 كجم",
+    title: {
+      en: "Panoramic Cabins & High-Speed Vertical Mobility",
+      ar: "الكبائن البانورامية وأنظمة الحركة الرأسية",
     },
-    badge: { en: "VVVF High Efficiency", ar: "كفاءة عالية VVVF" },
-  },
-  {
-    id: "encoder",
-    xPercent: 12,
-    yPercent: 50,
-    title: { en: "Rotary Optical Encoder", ar: "مشفر السرعة والموقع الرقمي" },
-    spec: {
-      en: "2048 PPR Sincos / Endat | Direct Monarch NICE3000 Interface",
-      ar: "دقة 2048 نبضة/دورة | توافق مباشر مع لوحات مونارك وستيب",
+    subtitle: {
+      en: "Supplying premier passenger lift components, safety gears, and landing entrances across the Kingdom.",
+      ar: "توريد مكونات كبائن الركاب، أجهزة الأمان التدريجية، وأبواب الأدوار لكافة مشاريع المملكة.",
     },
-    badge: { en: "Precision Position", ar: "دقة التحكم بالموقع" },
   },
 ];
 
@@ -92,13 +79,19 @@ export function Hero() {
   const { t, locale, isRtl } = useLanguage();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeHotspotId, setActiveHotspotId] = useState<string>("sheave");
+  const [activeSceneIndex, setActiveSceneIndex] = useState(0);
 
   const ArrowIcon = isRtl ? ArrowLeft : ArrowRight;
   const photoUrl = getPhotoIdWhatsAppUrl(locale);
+  const currentScene = cinematicScenes[activeSceneIndex];
 
-  const activeHotspot =
-    hotspots.find((h) => h.id === activeHotspotId) || hotspots[0];
+  // Auto-cycle scenes every 9 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSceneIndex((prev) => (prev + 1) % cinematicScenes.length);
+    }, 9000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,248 +103,211 @@ export function Hero() {
   };
 
   return (
-    <section className="relative bg-[#050C1C] text-white pt-10 pb-20 px-4 sm:px-8 overflow-hidden border-b border-slate-800">
-      {/* CAD Blueprint Background & Atmospheric Ambient Glow */}
-      <div className="absolute inset-0 bg-blueprint-grid opacity-30 pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-navy/90 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 -right-32 w-96 h-96 bg-brand-gold/5 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative min-h-[90vh] flex flex-col justify-between text-white overflow-hidden border-b border-slate-800 bg-[#040814]">
+      {/* ─────────────────────────────────────────────────────────────
+          1. FULL-BLEED CINEMATIC BACKGROUND WITH TRANSITION & OVERLAYS
+      ───────────────────────────────────────────────────────────── */}
+      <div className="absolute inset-0 z-0">
+        {cinematicScenes.map((scene, idx) => (
+          <div
+            key={scene.id}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              idx === activeSceneIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
+            }`}
+          >
+            <Image
+              src={scene.image}
+              alt={scene.title[locale]}
+              fill
+              priority={idx === 0}
+              className="object-cover object-center filter brightness-[0.72] contrast-[1.12]"
+            />
+          </div>
+        ))}
 
-      <div className="max-w-7xl mx-auto relative z-10 space-y-12">
-        {/* Main Grid: Split Layout - B2B Console (Left) + 3D Mechanical Stage (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        {/* Dramatic Cinematic Lighting Overlays */}
+        {/* Top Fade */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#040814]/90 via-[#040814]/60 to-[#040814] pointer-events-none" />
+        {/* Subtle Blueprint Technical Grid */}
+        <div className="absolute inset-0 bg-blueprint-grid opacity-20 pointer-events-none" />
+        {/* Warm Ambient Gold Spotlight */}
+        <div className="absolute top-1/4 start-1/4 w-[600px] h-[350px] bg-brand-gold/15 rounded-full blur-[140px] pointer-events-none" />
+      </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          2. TOP HEADER HUD TICKER & SCENE CONTROLS
+      ───────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full pt-8 px-4 sm:px-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
           
-          {/* Left Column (7 Cols): Engineering Command Console */}
-          <div className="lg:col-span-7 space-y-6">
-            
-            {/* Top Telemetry & Verification Badge */}
-            <div className="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-brand-gold/40 text-brand-gold text-xs font-mono tracking-wider shadow-lg shadow-brand-gold/5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span className="font-bold text-slate-100">
-                {locale === "ar" ? "المستودع المركزي بالدمام" : "DAMMAM LOGISTICS HUB"}
-              </span>
-              <span className="text-slate-600">|</span>
-              <span className="text-brand-gold font-semibold">
-                {locale === "ar" ? "شحن فوري لكافة مدن المملكة" : "SAME-DAY KSA DISPATCH"}
-              </span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-400">CR: {companyData.crNumber}</span>
-            </div>
-
-            {/* Architectural Serif Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-black font-serif tracking-tight leading-[1.12] text-white">
-              {locale === "ar" ? (
-                <>
-                  توريد قطع غيار المصاعد <br />
-                  <span className="text-gradient-gold">بأعلى المعايير الهندسية في المملكة</span>
-                </>
-              ) : (
-                <>
-                  Certified Elevator Engineering <br />
-                  <span className="text-gradient-gold">Spares & Heavy Components In KSA</span>
-                </>
-              )}
-            </h1>
-
-            {/* Strategic Subtitle */}
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl font-sans">
-              {locale === "ar"
-                ? "استيراد مباشر من كبرى مصانع المصاعد في الهند والصين. مخزون فوري لأكثر من 10,000 صنف معتمد (EN 81 وSASO) يخدم مقاولي المصاعد وشركات الصيانة في الدمام، الرياض، وجدة."
-                : "Direct factory sourcing from certified manufacturing hubs in India & China. Extensive warehouse inventory in Dammam serving elevator contractors, OEMs, and facility engineers across Riyadh, Jeddah, and nationwide."}
-            </p>
-
-            {/* CAD Direct Search Console */}
-            <div className="pt-1 max-w-xl">
-              <div className="relative bg-slate-900/90 rounded-2xl border border-slate-700/80 p-2 shadow-2xl backdrop-blur-md">
-                <div className="cad-corner-tl" />
-                <div className="cad-corner-tr" />
-                <div className="cad-corner-bl" />
-                <div className="cad-corner-br" />
-
-                <form onSubmit={handleSearch} className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <Search className="w-4 h-4 text-brand-gold absolute start-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder={
-                        locale === "ar"
-                          ? "ابحث برقم القطعة (SKU)، اسم الموديل (NICE3000)، أو الماركة..."
-                          : "Search SKU, model (e.g. NICE3000+, VVVF), or OEM brand..."
-                      }
-                      className="w-full py-2.5 ps-10 pe-3 bg-transparent text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 rounded-xl bg-brand-gold hover:bg-brand-gold-dark text-slate-950 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 shadow-lg shadow-brand-gold/20 font-mono"
-                  >
-                    <span>{locale === "ar" ? "فحص المخزون" : "LOOKUP"}</span>
-                    <ArrowIcon className="w-3.5 h-3.5" />
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            {/* Direct Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Link
-                href="/catalog"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-gold hover:bg-brand-gold-dark text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-xl shadow-brand-gold/20 font-mono"
-              >
-                <Layers className="w-4 h-4" />
-                <span>{locale === "ar" ? "استعراض الكتالوج الهندسي" : "EXPLORE CAD CATALOG"}</span>
-              </Link>
-
-              <a
-                href={photoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-semibold text-xs transition-all font-mono"
-              >
-                <Camera className="w-4 h-4 text-brand-gold" />
-                <span>{t.hero.photoSupport}</span>
-              </a>
-            </div>
-
-            {/* OEM Brand Compatibility Strip */}
-            <div className="pt-4 border-t border-slate-800/80 space-y-2">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Cpu className="w-3.5 h-3.5 text-brand-gold" />
-                <span>{locale === "ar" ? "توافق مباشر مع الماركات العالمية:" : "DIRECT OEM COMPATIBILITY LOOKUP:"}</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {majorBrands.map((brand) => (
-                  <Link
-                    key={brand.name}
-                    href={`/catalog?brand=${encodeURIComponent(brand.query)}`}
-                    className="px-3 py-1 rounded-lg bg-slate-900/80 hover:bg-brand-gold/15 border border-slate-800 hover:border-brand-gold/60 text-slate-300 hover:text-brand-gold text-[11px] font-mono font-bold transition-all"
-                  >
-                    {brand.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
+          {/* Official Verification Pill */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-brand-gold/40 text-brand-gold text-xs font-mono tracking-wider shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-bold text-white uppercase">
+              {locale === "ar" ? "المستودع المركزي بالدمام" : "DAMMAM LOGISTICS HUB"}
+            </span>
+            <span className="text-slate-600">|</span>
+            <span className="text-brand-gold font-semibold">
+              {locale === "ar" ? "شحن فوري لكافة مدن المملكة" : "SAME-DAY KSA DISPATCH"}
+            </span>
+            <span className="text-slate-600">|</span>
+            <span className="text-slate-400">CR: {companyData.crNumber}</span>
           </div>
 
-          {/* Right Column (5 Cols): 3D Mechanical Stage with Interactive Hotspots */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative bg-slate-900/80 rounded-3xl border border-slate-800 p-4 shadow-2xl backdrop-blur-md overflow-hidden group">
-              <div className="cad-corner-tl" />
-              <div className="cad-corner-tr" />
-              <div className="cad-corner-bl" />
-              <div className="cad-corner-br" />
-
-              {/* Top HUD Telemetry Bar */}
-              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 border-b border-slate-800 pb-3 mb-3">
-                <span className="flex items-center gap-1.5 text-emerald-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>CAD-STAGE // PMSM-400</span>
-                </span>
-                <span className="text-brand-gold font-semibold">
-                  EN 81-20/50 SPEC
-                </span>
-                <span>RATED: 1000KG @ 1.75M/S</span>
-              </div>
-
-              {/* 3D Traction Machine Visual Container with Hotspots */}
-              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800/80">
-                <Image
-                  src="/images/hero/elevator_traction_machine.jpg"
-                  alt="Elevator PMSM Gearless Traction Machine"
-                  fill
-                  priority
-                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                />
-
-                {/* Subtle Blueprint Grid Texture Overlay */}
-                <div className="absolute inset-0 bg-blueprint-grid-dense opacity-20 pointer-events-none" />
-
-                {/* Interactive Hotspot Crosshairs */}
-                {hotspots.map((hs) => {
-                  const isActive = hs.id === activeHotspotId;
-                  return (
-                    <button
-                      key={hs.id}
-                      onClick={() => setActiveHotspotId(hs.id)}
-                      onMouseEnter={() => setActiveHotspotId(hs.id)}
-                      style={{
-                        left: `${hs.xPercent}%`,
-                        top: `${hs.yPercent}%`,
-                      }}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 z-20 group/hs focus:outline-none"
-                      aria-label={hs.title[locale]}
-                    >
-                      {/* Pulsing Target Rings */}
-                      <span className="relative flex items-center justify-center w-8 h-8">
-                        <span
-                          className={`absolute w-full h-full rounded-full transition-all duration-300 ${
-                            isActive
-                              ? "bg-brand-gold/40 animate-ping"
-                              : "bg-slate-500/20 group-hover/hs:bg-brand-gold/30"
-                          }`}
-                        />
-                        <span
-                          className={`relative w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center ${
-                            isActive
-                              ? "bg-brand-gold border-white shadow-lg shadow-brand-gold"
-                              : "bg-slate-900 border-brand-gold/80 group-hover/hs:bg-brand-gold"
-                          }`}
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-slate-950" />
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Active Hotspot Technical Inspection Card */}
-              <div className="mt-3 p-3.5 rounded-xl bg-slate-950/90 border border-brand-gold/40 shadow-xl space-y-1 transition-all">
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span className="font-bold text-brand-gold flex items-center gap-1.5">
-                    <Zap className="w-3 h-3 text-brand-gold" />
-                    <span>{activeHotspot.title[locale]}</span>
+          {/* Interactive Scene Switcher HUD */}
+          <div className="flex items-center gap-2 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-800 text-[11px] font-mono">
+            {cinematicScenes.map((scene, idx) => {
+              const isActive = idx === activeSceneIndex;
+              return (
+                <button
+                  key={scene.id}
+                  onClick={() => setActiveSceneIndex(idx)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                    isActive
+                      ? "bg-brand-gold text-slate-950 font-bold shadow-md"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      isActive ? "bg-slate-950" : "bg-slate-600"
+                    }`}
+                  />
+                  <span>0{idx + 1}</span>
+                  <span className="hidden md:inline">
+                    {idx === 0
+                      ? locale === "ar"
+                        ? "منظومة الجر"
+                        : "TRACTION"
+                      : locale === "ar"
+                      ? "الكبائن المعمارية"
+                      : "CABINS"}
                   </span>
-                  <span className="text-[10px] bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded font-bold">
-                    {activeHotspot.badge[locale]}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-snug font-mono">
-                  {activeHotspot.spec[locale]}
-                </p>
-              </div>
-
-              {/* Bottom Quick Switcher Pills for Hotspots */}
-              <div className="mt-2.5 grid grid-cols-4 gap-1.5 text-center">
-                {hotspots.map((hs) => {
-                  const isActive = hs.id === activeHotspotId;
-                  return (
-                    <button
-                      key={hs.id}
-                      onClick={() => setActiveHotspotId(hs.id)}
-                      className={`py-1 px-1 rounded text-[9px] font-mono truncate transition-all ${
-                        isActive
-                          ? "bg-brand-gold text-slate-950 font-bold"
-                          : "bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800"
-                      }`}
-                    >
-                      {hs.id.toUpperCase()}
-                    </button>
-                  );
-                })}
-              </div>
-
-            </div>
+                </button>
+              );
+            })}
           </div>
 
         </div>
+      </div>
 
-        {/* Technical Engineering Metrics Ribbon */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-7xl mx-auto pt-6 border-t border-slate-800/80">
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+      {/* ─────────────────────────────────────────────────────────────
+          3. MAIN HERO STAGE: ARCHITECTURAL HEADLINE & GLASS COMMAND HUB
+      ───────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-8 py-12 text-center space-y-8">
+        
+        {/* Dynamic Scene Tag */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/30 text-brand-gold text-xs font-mono tracking-widest uppercase animate-in fade-in duration-500">
+          <Zap className="w-3.5 h-3.5 text-brand-gold" />
+          <span>{currentScene.badge[locale]}</span>
+        </div>
+
+        {/* Grand Architectural Serif Headline */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif tracking-tight leading-[1.12] text-white max-w-4xl mx-auto">
+          {locale === "ar" ? (
+            <>
+              هندسة المصاعد الدقيقة: <br />
+              <span className="text-gradient-gold">التوريد المباشر لقطع الغيار والمكونات بالمملكة</span>
+            </>
+          ) : (
+            <>
+              Engineered Vertical Mobility: <br />
+              <span className="text-gradient-gold">Precision Elevator Spares In Saudi Arabia</span>
+            </>
+          )}
+        </h1>
+
+        {/* Narrative Subtitle */}
+        <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto font-sans">
+          {locale === "ar"
+            ? "الاستيراد المباشر من كبرى مصانع المصاعد في الصين والهند. مستودعات مركزية بالدمام ومخزون فوري لأكثر من 10,000 صنف معتمد (EN 81 وSASO) يخدم مقاولي المصاعد وشركات الصيانة في كافة مدن المملكة."
+            : "Direct factory sourcing from premier manufacturing hubs in China & India. Extensive Dammam warehouse inventory serving elevator contractors, OEMs, and facility management firms across Riyadh, Jeddah, and nationwide."}
+        </p>
+
+        {/* Glassmorphic Search & Command Bar */}
+        <div className="pt-2 max-w-2xl mx-auto">
+          <div className="relative bg-slate-950/85 backdrop-blur-xl rounded-2xl border-2 border-brand-gold/50 hover:border-brand-gold focus-within:border-brand-gold p-2 shadow-2xl transition-all">
+            <div className="cad-corner-tl" />
+            <div className="cad-corner-tr" />
+            <div className="cad-corner-bl" />
+            <div className="cad-corner-br" />
+
+            <form onSubmit={handleSearch} className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="w-5 h-5 text-brand-gold absolute start-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={
+                    locale === "ar"
+                      ? "ابحث برقم القطعة (SKU)، اسم الموديل (NICE3000)، أو الماركة..."
+                      : "Search by SKU, model (e.g. NICE3000+, VVVF), or OEM brand..."
+                  }
+                  className="w-full py-3 ps-11 pe-3 bg-transparent text-white placeholder-slate-400 text-sm font-medium focus:outline-none"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-gold-dark text-slate-950 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 shadow-lg shadow-brand-gold/20 font-mono"
+              >
+                <span>{locale === "ar" ? "فحص المخزون" : "LOOKUP"}</span>
+                <ArrowIcon className="w-3.5 h-3.5" />
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Primary Direct CTAs */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+          <Link
+            href="/catalog"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-brand-gold hover:bg-brand-gold-dark text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-xl shadow-brand-gold/25 font-mono"
+          >
+            <Layers className="w-4 h-4" />
+            <span>{locale === "ar" ? "استعراض الكتالوج الهندسي" : "EXPLORE CAD CATALOG"}</span>
+          </Link>
+
+          <a
+            href={photoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-950/80 hover:bg-slate-900 text-slate-200 border border-slate-700/80 font-semibold text-xs transition-all font-mono backdrop-blur-md"
+          >
+            <Camera className="w-4 h-4 text-brand-gold" />
+            <span>{t.hero.photoSupport}</span>
+          </a>
+        </div>
+
+        {/* Fast Brand Compatibility Dock */}
+        <div className="pt-4 space-y-2.5">
+          <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 flex items-center justify-center gap-2">
+            <Cpu className="w-3.5 h-3.5 text-brand-gold" />
+            <span>{locale === "ar" ? "توافق مباشر مع كبرى الماركات العالمية:" : "DIRECT OEM COMPATIBILITY LOOKUP:"}</span>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto">
+            {majorBrands.map((brand) => (
+              <Link
+                key={brand.name}
+                href={`/catalog?brand=${encodeURIComponent(brand.query)}`}
+                className="px-3.5 py-1.5 rounded-lg bg-slate-950/80 hover:bg-brand-gold/20 border border-slate-800 hover:border-brand-gold text-slate-300 hover:text-brand-gold text-xs font-mono font-semibold transition-all backdrop-blur-md"
+              >
+                {brand.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          4. LOWER CINEMATIC ENGINEERING METRICS HUD
+      ───────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-8 pb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/10">
+          
+          <div className="bg-slate-950/70 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+            <div className="cad-corner-tl" />
             <div className="text-[10px] font-mono text-slate-500 mb-1">SPEC-EXP-01</div>
             <div className="text-3xl font-black text-brand-gold font-mono tracking-tight">
               {t.hero.stats.experienceYears}
@@ -360,7 +316,8 @@ export function Hero() {
             <div className="text-[10px] text-slate-500 font-mono mt-0.5">30+ Yrs Field Diagnostics</div>
           </div>
 
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+          <div className="bg-slate-950/70 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+            <div className="cad-corner-tl" />
             <div className="text-[10px] font-mono text-slate-500 mb-1">STOCK-CAP-02</div>
             <div className="text-3xl font-black text-emerald-400 font-mono tracking-tight">
               {t.hero.stats.partsInStock}
@@ -369,7 +326,8 @@ export function Hero() {
             <div className="text-[10px] text-slate-500 font-mono mt-0.5">EN 81 & SASO Certified</div>
           </div>
 
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+          <div className="bg-slate-950/70 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+            <div className="cad-corner-tl" />
             <div className="text-[10px] font-mono text-slate-500 mb-1">KSA-LOG-03</div>
             <div className="text-3xl font-black text-brand-gold font-mono tracking-tight">
               {t.hero.stats.coverage}
@@ -378,7 +336,8 @@ export function Hero() {
             <div className="text-[10px] text-slate-500 font-mono mt-0.5">Dammam, Riyadh, Jeddah</div>
           </div>
 
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+          <div className="bg-slate-950/70 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-brand-gold/40 transition-all">
+            <div className="cad-corner-tl" />
             <div className="text-[10px] font-mono text-slate-500 mb-1">SUPPLY-DIR-04</div>
             <div className="text-3xl font-black text-sky-400 font-mono tracking-tight">
               {t.hero.stats.logisticsYears}
@@ -386,8 +345,8 @@ export function Hero() {
             <div className="text-xs font-semibold text-slate-200 mt-1">{t.hero.stats.logisticsLabel}</div>
             <div className="text-[10px] text-slate-500 font-mono mt-0.5">China & India Direct Alliances</div>
           </div>
-        </div>
 
+        </div>
       </div>
     </section>
   );
