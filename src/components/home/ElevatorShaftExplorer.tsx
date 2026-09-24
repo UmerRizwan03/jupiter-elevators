@@ -283,7 +283,7 @@ export function ElevatorShaftExplorer() {
                 </div>
                 {/* Center Arrows */}
                 <div className="text-center font-mono font-bold text-xs text-brand-gold">
-                  {language === "ar" ? companyData.brandName.ar : companyData.brandName.en}
+                  {locale === "ar" ? companyData.brandName.ar : companyData.brandName.en}
                 </div>
                 {/* Car Floor */}
                 <div className="flex items-center justify-between text-[8px] font-mono text-slate-500 border-t border-slate-700/60 pt-1">
