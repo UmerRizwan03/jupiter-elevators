@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { companyData } from "@/data/company";
 import { ShieldCheck, Truck, Factory, Users, Award, CheckCircle } from "lucide-react";
@@ -87,6 +88,62 @@ export function TrustHighlights() {
                 ? "منشأة وطنية معتمدة بسجل تجاري ورقم ضريبي معتمد لكافة المشاريع والمناقصات."
                 : `Registered Saudi establishment (${companyData.legalName[locale]}) with official CR and VAT compliance.`}
             </p>
+          </div>
+        </div>
+
+        {/* Dammam Logistics & Central Warehouse Hub Showcase Card */}
+        <div className="mt-12 rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden relative shadow-2xl">
+          <div className="cad-corner-tl" />
+          <div className="cad-corner-tr" />
+          <div className="cad-corner-bl" />
+          <div className="cad-corner-br" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Warehouse High-Bay Photography */}
+            <div className="lg:col-span-7 relative h-72 sm:h-96 w-full overflow-hidden">
+              <Image
+                src="/images/hero/dammam_warehouse_hub.jpg"
+                alt="Jupiter Elevators Dammam Distribution Center"
+                fill
+                className="object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+              <div className="absolute bottom-4 start-4 flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>DAMMAM HUB // HIGH-BAY INVENTORY DISPATCH</span>
+              </div>
+            </div>
+
+            {/* Warehouse Logistics Metadata */}
+            <div className="lg:col-span-5 p-6 sm:p-8 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/15 text-brand-gold text-xs font-mono font-bold tracking-wider">
+                <Truck className="w-3.5 h-3.5" />
+                <span>{locale === "ar" ? "المركز اللوجستي المعتمد" : "CERTIFIED LOGISTICS CENTER"}</span>
+              </div>
+
+              <h3 className="text-2xl font-black font-serif text-white tracking-tight">
+                {locale === "ar"
+                  ? "مستودعاتنا المركزية بالدمام: جاهزية فورية لتوريد كافة مناطق المملكة"
+                  : "Dammam Central Distribution Hub: Nationwide Same-Day Dispatch"}
+              </h3>
+
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-sans">
+                {locale === "ar"
+                  ? "نحتفظ بمخزون استراتيجي ضخم من ماكينات الجر، كبائن المصاعد، أبواب فيرماتور، وسكك التوجيه، مما يضمن توريداً مباشراً وسريعاً لمقاولي المصاعد في الرياض، جدة، والمنطقة الشرقية."
+                  : "Holding deep strategic stock of PMSM traction machines, Fermator door operators, guide rails, and controllers to ensure zero project downtime across Riyadh, Jeddah, and the Eastern Province."}
+              </p>
+
+              <div className="pt-2 border-t border-slate-800 grid grid-cols-2 gap-4 text-xs font-mono">
+                <div>
+                  <div className="text-slate-500">OFFICIAL CR</div>
+                  <div className="text-slate-200 font-bold">{companyData.crNumber}</div>
+                </div>
+                <div>
+                  <div className="text-slate-500">VAT REGISTRATION</div>
+                  <div className="text-slate-200 font-bold">{companyData.vatNumber}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
