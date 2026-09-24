@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 240" width="100%" height="100%">
+  <defs>
+    <!-- Metallic Gold Gradients -->
+    <linearGradient id="goldHLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C59341" />
+      <stop offset="25%" stop-color="#EED59B" />
+      <stop offset="50%" stop-color="#B88232" />
+      <stop offset="75%" stop-color="#F7E6B8" />
+      <stop offset="100%" stop-color="#9C6B20" />
+    </linearGradient>
+
+    <linearGradient id="goldTextGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E2C280" />
+      <stop offset="45%" stop-color="#FDF3DA" />
+      <stop offset="55%" stop-color="#C59341" />
+      <stop offset="100%" stop-color="#8F5E24" />
+    </linearGradient>
+
+    <linearGradient id="darkTowerH" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <linearGradient id="towerWhiteH" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+
+    <radialGradient id="sphereLightH" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3" />
+      <stop offset="60%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
+    </radialGradient>
+
+    <clipPath id="planetClipH">
+      <circle cx="120" cy="120" r="70" />
+    </clipPath>
+  </defs>
+
+  <!-- === LEFT: BRAND MARK (Scaled to 240x240 center) === -->
+  <g transform="translate(10, 0)">
+    <!-- Base Planet Sphere -->
+    <circle cx="120" cy="120" r="70" fill="#B38038" />
+
+    <!-- Jupiter Atmosphere Bands -->
+    <g clip-path="url(#planetClipH)">
+      <rect x="40" y="50" width="160" height="14" fill="#8F5E24" />
+      <rect x="40" y="64" width="160" height="10" fill="#DDBF7E" />
+      <rect x="40" y="74" width="160" height="17" fill="#B3823D" />
+      <rect x="40" y="91" width="160" height="10" fill="#F0DDA5" />
+      <rect x="40" y="101" width="160" height="21" fill="#99682A" />
+      <rect x="40" y="122" width="160" height="12" fill="#E4C88A" />
+      <rect x="40" y="134" width="160" height="17" fill="#8F5E24" />
+      <rect x="40" y="151" width="160" height="13" fill="#D6B875" />
+      <rect x="40" y="164" width="160" height="20" fill="#9E6C2E" />
+      <!-- Spherical Lighting -->
+      <circle cx="120" cy="120" r="70" fill="url(#sphereLightH)" />
+    </g>
+
+    <!-- Orbital Ring & Moon -->
+    <g transform="rotate(-26 120 120)">
+      <ellipse cx="120" cy="120" rx="118" ry="23" fill="none" stroke="url(#goldHLinear)" stroke-width="3" />
+      <ellipse cx="120" cy="120" rx="116" ry="22" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="0.7" />
+      <circle cx="208" cy="105" r="5" fill="url(#goldHLinear)" />
+      <circle cx="207" cy="104" r="1.8" fill="#FFFFFF" fill-opacity="0.6" />
+    </g>
+
+    <!-- Elevator Towers -->
+    <!-- Left Tower -->
+    <polygon points="88,180 88,85 101,75 101,180" fill="url(#darkTowerH)" />
+    <polygon points="101,180 101,75 106,79 106,180" fill="url(#goldHLinear)" />
+
+    <!-- Center Main Tower -->
+    <polygon points="107,185 107,50 120,38 120,185" fill="url(#darkTowerH)" />
+    <polygon points="120,185 120,38 123,40 123,185" fill="url(#towerWhiteH)" />
+    <polygon points="123,185 123,40 135,50 135,185" fill="url(#goldHLinear)" />
+
+    <!-- Direction Arrows (▲ and ▼) -->
+    <polygon points="120,113 116,119 124,119" fill="#F7E6B8" />
+    <polygon points="120,128 116,122 124,122" fill="#F7E6B8" />
+
+    <!-- Right Tower -->
+    <polygon points="137,180 137,88 141,91 141,180" fill="url(#towerWhiteH)" />
+    <polygon points="141,180 141,91 151,100 151,180" fill="url(#goldHLinear)" />
+
+    <!-- Base Line -->
+    <line x1="86" y1="185" x2="153" y2="185" stroke="url(#goldHLinear)" stroke-width="2" />
+  </g>
+
+  <!-- === RIGHT: TYPOGRAPHY / WORDMARK === -->
+  <g transform="translate(290, 0)">
+    <!-- JUPITER (Primary Wordmark) -->
+    <text x="0" y="112" font-family="'Cinzel', 'Trajan Pro', 'Didot', 'Georgia', serif" font-size="82" font-weight="900" letter-spacing="4" fill="url(#goldTextGrad)">
+      JUPITER
+    </text>
+
+    <!-- — ELEVATORS — -->
+    <!-- Left Accent Line -->
+    <line x1="2" y1="145" x2="90" y2="145" stroke="url(#goldHLinear)" stroke-width="2" />
+    <!-- ELEVATORS Text -->
+    <text x="105" y="152" font-family="'Inter', 'Montserrat', 'Helvetica Neue', sans-serif" font-size="22" font-weight="700" letter-spacing="14" fill="#0B1B3D">
+      ELEVATORS
+    </text>
+    <!-- Right Accent Line -->
+    <line x1="390" y1="145" x2="478" y2="145" stroke="url(#goldHLinear)" stroke-width="2" />
+
+    <!-- Tagline: ELEVATING BEYOND EXPECTATIONS -->
+    <text x="3" y="185" font-family="'Inter', 'Montserrat', 'Helvetica Neue', sans-serif" font-size="14.5" font-weight="500" letter-spacing="7" fill="#64748B">
+      ELEVATING BEYOND EXPECTATIONS
+    </text>
+  </g>
+</svg>

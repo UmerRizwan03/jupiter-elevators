@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Metallic Gold Gradients -->
+    <linearGradient id="goldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C59341" />
+      <stop offset="25%" stop-color="#EED59B" />
+      <stop offset="50%" stop-color="#B88232" />
+      <stop offset="75%" stop-color="#F7E6B8" />
+      <stop offset="100%" stop-color="#9C6B20" />
+    </linearGradient>
+
+    <linearGradient id="goldH" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A57327" />
+      <stop offset="35%" stop-color="#F1DC9F" />
+      <stop offset="70%" stop-color="#B98433" />
+      <stop offset="100%" stop-color="#E8CE8D" />
+    </linearGradient>
+
+    <linearGradient id="darkTower" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <linearGradient id="towerWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+
+    <!-- Radial Sphere Shader -->
+    <radialGradient id="sphereLight" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3" />
+      <stop offset="60%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
+    </radialGradient>
+
+    <!-- Clip Path for Jupiter Planet Sphere -->
+    <clipPath id="planetClip">
+      <circle cx="250" cy="245" r="115" />
+    </clipPath>
+  </defs>
+
+  <!-- === 1. JUPITER PLANET WITH HORIZONTAL BANDS === -->
+  <g id="planetGroup">
+    <!-- Base Planet Sphere -->
+    <circle cx="250" cy="245" r="115" fill="#B38038" />
+
+    <!-- Jupiter Atmosphere Bands clipped to sphere -->
+    <g clip-path="url(#planetClip)">
+      <rect x="130" y="130" width="240" height="23" fill="#8F5E24" />
+      <rect x="130" y="153" width="240" height="15" fill="#DDBF7E" />
+      <rect x="130" y="168" width="240" height="28" fill="#B3823D" />
+      <rect x="130" y="196" width="240" height="16" fill="#F0DDA5" />
+      <rect x="130" y="212" width="240" height="35" fill="#99682A" />
+      <rect x="130" y="247" width="240" height="18" fill="#E4C88A" />
+      <rect x="130" y="265" width="240" height="26" fill="#8F5E24" />
+      <rect x="130" y="291" width="240" height="20" fill="#D6B875" />
+      <rect x="130" y="311" width="240" height="30" fill="#9E6C2E" />
+      <rect x="130" y="341" width="240" height="30" fill="#C79F5E" />
+      <!-- Spherical Lighting Overlay -->
+      <circle cx="250" cy="245" r="115" fill="url(#sphereLight)" />
+    </g>
+  </g>
+
+  <!-- === 2. ORBITAL RING & SATELLITE (Back half behind towers) === -->
+  <g id="orbitRing" transform="rotate(-26 250 250)">
+    <!-- Main Elliptical Ring -->
+    <ellipse cx="250" cy="250" rx="195" ry="38" fill="none" stroke="url(#goldH)" stroke-width="4.5" />
+    <!-- Inner Accent Ring Line -->
+    <ellipse cx="250" cy="250" rx="192" ry="36" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="1" />
+    
+    <!-- Moon / Satellite Sphere on Orbit (Top Right) -->
+    <circle cx="395" cy="225" r="8.5" fill="url(#goldLinear)" />
+    <circle cx="393" cy="223" r="3" fill="#FFFFFF" fill-opacity="0.6" />
+  </g>
+
+  <!-- === 3. ELEVATOR TOWERS & ARCHITECTURAL SHAFTS === -->
+  <g id="elevatorTowers">
+    <!-- Left Wing Tower (Dark side) -->
+    <polygon points="198,345 198,185 218,170 218,345" fill="url(#darkTower)" />
+    <polygon points="218,345 218,170 226,176 226,345" fill="url(#goldLinear)" />
+
+    <!-- Center Main Elevator Shaft (Tallest) -->
+    <!-- Left Dark Facet -->
+    <polygon points="228,355 228,125 250,105 250,355" fill="url(#darkTower)" />
+    <!-- Center White/Silver Facet -->
+    <polygon points="250,355 250,105 254,108 254,355" fill="url(#towerWhite)" />
+    <!-- Right Golden Facet -->
+    <polygon points="254,355 254,108 274,124 274,355" fill="url(#goldLinear)" />
+
+    <!-- Elevator Direction Indicators (▲ and ▼ in Central Shaft) -->
+    <g transform="translate(242, 235)">
+      <!-- Up Arrow ▲ -->
+      <polygon points="8,0 3,8 13,8" fill="#F7E6B8" stroke="#8F5E24" stroke-width="0.8" />
+      <!-- Down Arrow ▼ -->
+      <polygon points="8,19 3,11 13,11" fill="#F7E6B8" stroke="#8F5E24" stroke-width="0.8" />
+    </g>
+
+    <!-- Right Wing Tower -->
+    <!-- Left White/Silver Edge -->
+    <polygon points="278,345 278,190 283,194 283,345" fill="url(#towerWhite)" />
+    <!-- Right Golden Facet -->
+    <polygon points="283,345 283,194 300,208 300,345" fill="url(#goldLinear)" />
+    
+    <!-- Base Foundation Line -->
+    <line x1="195" y1="355" x2="305" y2="355" stroke="url(#goldLinear)" stroke-width="2.5" />
+  </g>
+</svg>
