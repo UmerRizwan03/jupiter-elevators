@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         brand: {
           navy: "#0B1B3D",
+          "navy-deep": "#050C1C",
           "navy-dark": "#071228",
           "navy-light": "#132A5C",
           gold: "#C59341",
@@ -18,9 +19,11 @@ const config: Config = {
           "gold-dark": "#9C6B20",
           amber: "#D97706",
           slate: "#1E293B",
+          brass: "#D4AF37",
         },
       },
       fontFamily: {
+        serif: ["var(--font-cinzel)", "Georgia", "serif"],
         sans: ["var(--font-inter)", "var(--font-cairo)", "sans-serif"],
         arabic: ["var(--font-cairo)", "sans-serif"],
       },

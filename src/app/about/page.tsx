@@ -36,7 +36,7 @@ export default function AboutPage() {
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>{t.about.legalSubtitle}</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-black font-serif tracking-tight">
               {t.about.title}
             </h1>
             <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">

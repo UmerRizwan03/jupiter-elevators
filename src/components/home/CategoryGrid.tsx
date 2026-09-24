@@ -42,23 +42,23 @@ export function CategoryGrid() {
   const ArrowIcon = isRtl ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="py-16 px-4 sm:px-8 bg-white">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <section className="py-20 px-4 sm:px-8 bg-slate-950 text-white relative overflow-hidden border-b border-slate-800">
+      <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
           <div className="space-y-2">
-            <span className="text-xs font-bold text-brand-gold uppercase tracking-wider">
-              {locale === "ar" ? "كتالوج القطع والمكونات" : "Parts & Components Catalog"}
+            <span className="text-xs font-mono font-bold text-brand-gold uppercase tracking-widest">
+              {locale === "ar" ? "كتالوج القطع والمكونات الشامل" : "CATEGORIZED COMPONENT MATRIX"}
             </span>
-            <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              {locale === "ar" ? "12 تصنيفاً رئيسياً لقطع غيار المصاعد" : "12 Comprehensive Spare Parts Categories"}
+            <h2 className="text-2xl sm:text-4xl font-black font-serif text-white tracking-tight">
+              {locale === "ar" ? "12 تصنيفاً رئيسياً لقطع غيار المصاعد" : "12 Primary Spare Parts Classifications"}
             </h2>
           </div>
           <Link
             href="/catalog"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-navy hover:text-brand-gold transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-gold hover:text-brand-gold-light transition-colors"
           >
-            <span>{locale === "ar" ? "عرض جميع القطع في الكتالوج" : "View Complete Catalog"}</span>
+            <span>{locale === "ar" ? "عرض جميع القطع في الكتالوج" : "VIEW COMPLETE SPEC INDEX"}</span>
             <ArrowIcon className="w-4 h-4" />
           </Link>
         </div>
@@ -72,36 +72,39 @@ export function CategoryGrid() {
               <Link
                 key={category.id}
                 href={`/catalog?category=${category.id}`}
-                className="group bg-slate-50 hover:bg-white rounded-2xl p-6 border border-slate-200 hover:border-brand-gold/60 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between"
+                className="group bg-slate-900 hover:bg-slate-900/90 rounded-2xl p-6 border border-slate-800 hover:border-brand-gold/60 transition-all duration-300 shadow-md hover:shadow-2xl flex flex-col justify-between relative overflow-hidden"
               >
+                <div className="cad-corner-tl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="cad-corner-tr opacity-0 group-hover:opacity-100 transition-opacity" />
+
                 <div className="space-y-4">
                   {/* Category Icon */}
-                  <div className="w-12 h-12 rounded-xl bg-brand-navy group-hover:bg-brand-gold text-brand-gold group-hover:text-brand-navy flex items-center justify-center transition-colors shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 group-hover:border-brand-gold text-brand-gold flex items-center justify-center transition-colors shadow-sm">
                     <Icon className="w-6 h-6" />
                   </div>
 
                   {/* Title & Description */}
                   <div className="space-y-1.5">
-                    <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-navy transition-colors">
+                    <h3 className="text-base font-bold text-slate-100 group-hover:text-brand-gold transition-colors font-serif">
                       {category.name[locale]}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                       {category.description[locale]}
                     </p>
                   </div>
 
                   {/* Subcomponents Chips */}
-                  <div className="pt-2 flex flex-wrap gap-1.5">
+                  <div className="pt-2 flex flex-wrap gap-1.5 font-mono">
                     {category.subcategories.slice(0, 3).map((sub, i) => (
                       <span
                         key={i}
-                        className="text-[10px] font-medium bg-white group-hover:bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200"
+                        className="text-[10px] bg-slate-950 text-slate-300 px-2 py-0.5 rounded border border-slate-800/80"
                       >
                         {sub[locale]}
                       </span>
                     ))}
                     {category.subcategories.length > 3 && (
-                      <span className="text-[10px] font-medium text-brand-gold px-1">
+                      <span className="text-[10px] font-bold text-brand-gold px-1">
                         +{category.subcategories.length - 3}
                       </span>
                     )}
@@ -109,8 +112,8 @@ export function CategoryGrid() {
                 </div>
 
                 {/* Bottom Action Link */}
-                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-between text-xs font-bold text-brand-navy group-hover:text-brand-gold transition-colors">
-                  <span>{locale === "ar" ? "تصفح القطع" : "Browse Parts"}</span>
+                <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono font-bold text-slate-400 group-hover:text-brand-gold transition-colors">
+                  <span>{locale === "ar" ? "تصفح القطع" : "EXPLORE PARTS"}</span>
                   <ArrowIcon className="w-4 h-4 transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
                 </div>
               </Link>
@@ -121,3 +124,4 @@ export function CategoryGrid() {
     </section>
   );
 }
+

@@ -119,7 +119,7 @@ export default function QuotePage() {
           <span className="text-xs font-bold text-brand-gold uppercase tracking-wider">
             {locale === "ar" ? "سلة طلبات الأسعار" : "Quotation Basket"}
           </span>
-          <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-black font-serif text-slate-900 tracking-tight">
             {t.rfq.title}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-2xl">

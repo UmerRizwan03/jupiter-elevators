@@ -24,16 +24,20 @@ import {
   Camera,
   Eye,
   Layers,
+  Cpu,
+  Globe2,
+  Compass,
 } from "lucide-react";
 
 function CatalogContent() {
   const { t, locale } = useLanguage();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "all";
+  const initialBrand = searchParams.get("brand") || "all";
   const initialQuery = searchParams.get("q") || "";
 
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-  const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [selectedBrand, setSelectedBrand] = useState<string>(initialBrand);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
   const [activeModalPart, setActiveModalPart] = useState<ElevatorPart | null>(null);
@@ -58,7 +62,7 @@ function CatalogContent() {
         return false;
       }
       // Brand filter
-      if (selectedBrand !== "all" && !p.compatibleBrands.includes(selectedBrand)) {
+      if (selectedBrand !== "all" && !p.compatibleBrands.some((b) => b.toLowerCase() === selectedBrand.toLowerCase())) {
         return false;
       }
       // In-stock filter
@@ -105,32 +109,35 @@ function CatalogContent() {
     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-8">
       {/* Page Title & Search Bar */}
       <div className="space-y-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-mono">
+              <span>ISO 7465 / EN 81 COMPLIANT INVENTORY</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight text-white">
               {t.catalog.title}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-2xl mt-1">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
               {t.catalog.subtitle}
             </p>
           </div>
-          <div className="text-xs font-semibold text-slate-600">
-            {locale === "ar" ? "إجمالي القطع المعروضة:" : "Showing:"}{" "}
-            <span className="font-mono font-bold text-brand-navy bg-slate-100 px-2 py-1 rounded">
-              {filteredProducts.length} {locale === "ar" ? "قطعة" : "items"}
+          <div className="text-xs font-mono font-bold text-slate-400">
+            {locale === "ar" ? "إجمالي القطع المعروضة:" : "SHOWING:"}{" "}
+            <span className="text-brand-gold bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+              {filteredProducts.length} {locale === "ar" ? "قطعة" : "COMPONENTS"}
             </span>
           </div>
         </div>
 
-        {/* Global Search Bar */}
+        {/* Global Search Bar with CAD Frame */}
         <div className="relative">
-          <Search className="w-5 h-5 text-slate-400 absolute start-4 top-1/2 -translate-y-1/2" />
+          <Search className="w-5 h-5 text-brand-gold absolute start-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.catalog.searchPlaceholder}
-            className="w-full py-3.5 ps-12 pe-4 rounded-2xl bg-white border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold shadow-sm font-medium"
+            className="w-full py-4 ps-12 pe-4 rounded-2xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold shadow-lg font-medium"
           />
         </div>
       </div>
@@ -138,9 +145,9 @@ function CatalogContent() {
       {/* Main Grid: Filters + Catalog Products */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Filter Sidebar */}
-        <aside className="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-6 space-y-6 shadow-sm sticky top-24">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+        <aside className="lg:col-span-3 bg-slate-900 rounded-3xl border border-slate-800 p-6 space-y-6 shadow-xl sticky top-24">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
               <Filter className="w-4 h-4 text-brand-gold" />
               <span>{t.catalog.filterTitle}</span>
             </h3>
@@ -150,7 +157,7 @@ function CatalogContent() {
               searchQuery) && (
               <button
                 onClick={handleResetFilters}
-                className="text-xs text-brand-gold hover:underline flex items-center gap-1 font-semibold"
+                className="text-xs text-brand-gold hover:underline flex items-center gap-1 font-mono font-semibold"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>{t.catalog.clearFilters}</span>
@@ -160,16 +167,16 @@ function CatalogContent() {
 
           {/* Filter 1: Categories */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-              {locale === "ar" ? "التصنيف الرئيسي" : "Category"}
+            <label className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+              {locale === "ar" ? "التصنيف الرئيسي" : "COMPONENT CATEGORY"}
             </label>
             <div className="space-y-1 max-h-60 overflow-y-auto pr-1">
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={`w-full text-start px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                className={`w-full text-start px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                   selectedCategory === "all"
-                    ? "bg-brand-navy text-white font-bold"
-                    : "text-slate-700 hover:bg-slate-50"
+                    ? "bg-brand-navy border border-brand-gold text-brand-gold font-bold shadow-sm"
+                    : "text-slate-300 hover:bg-slate-800/60"
                 }`}
               >
                 {t.catalog.allCategories}
@@ -178,10 +185,10 @@ function CatalogContent() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`w-full text-start px-3 py-2 rounded-xl text-xs font-medium transition-colors truncate block ${
+                  className={`w-full text-start px-3 py-2 rounded-xl text-xs font-medium transition-all truncate block ${
                     selectedCategory === cat.id
-                      ? "bg-brand-navy text-white font-bold"
-                      : "text-slate-700 hover:bg-slate-50"
+                      ? "bg-brand-navy border border-brand-gold text-brand-gold font-bold shadow-sm"
+                      : "text-slate-300 hover:bg-slate-800/60"
                   }`}
                 >
                   {cat.name[locale]}
@@ -192,13 +199,13 @@ function CatalogContent() {
 
           {/* Filter 2: Compatible Brands */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-              {locale === "ar" ? "الماركة المتوافقة" : "Compatible Brand"}
+            <label className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+              {locale === "ar" ? "الماركة المتوافقة" : "OEM BRAND COMPATIBILITY"}
             </label>
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-gold"
+              className="w-full py-2.5 px-3 rounded-xl border border-slate-800 text-xs font-mono font-semibold bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-gold"
             >
               <option value="all">{t.catalog.allBrands}</option>
               {allBrands.map((b) => (
@@ -210,37 +217,37 @@ function CatalogContent() {
           </div>
 
           {/* Filter 3: In Stock Only Toggle */}
-          <div className="pt-2 border-t border-slate-100">
-            <label className="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-slate-700 select-none">
+          <div className="pt-2 border-t border-slate-800">
+            <label className="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-slate-300 select-none">
               <input
                 type="checkbox"
                 checked={inStockOnly}
                 onChange={(e) => setInStockOnly(e.target.checked)}
-                className="w-4 h-4 rounded text-brand-gold focus:ring-brand-gold border-slate-300"
+                className="w-4 h-4 rounded text-brand-gold focus:ring-brand-gold border-slate-700 bg-slate-950"
               />
               <span>{t.catalog.inStockOnly}</span>
             </label>
           </div>
 
           {/* Sidebar CTA: Photo Match Tool */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-center">
+          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-center relative overflow-hidden">
             <Camera className="w-6 h-6 text-brand-gold mx-auto" />
-            <h4 className="text-xs font-bold text-slate-900">
-              {locale === "ar" ? "هل القطعة غير واضحة؟" : "Can't find the part?"}
+            <h4 className="text-xs font-bold text-slate-100">
+              {locale === "ar" ? "صعوبة في تحديد القطعة؟" : "Can't Identify The Part?"}
             </h4>
-            <p className="text-[11px] text-slate-500 leading-tight">
+            <p className="text-[11px] text-slate-400 leading-tight">
               {locale === "ar"
-                ? "أرسل صورة القطعة عبر الواتساب وسنقوم بمطابقتها فوراً."
-                : "Send a photo via WhatsApp for instant technical matching."}
+                ? "أرسل صورة القطعة التالفة عبر الواتساب وسنقوم بمطابقتها فورياً."
+                : "Send a photo via WhatsApp for instant technical matching by our lift engineers."}
             </p>
             <a
               href={photoIdUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition-colors"
+              className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              <span>{locale === "ar" ? "إرسال صورة" : "Send Photo"}</span>
+              <span>{locale === "ar" ? "إرسال صورة" : "Snap & Send"}</span>
             </a>
           </div>
         </aside>
@@ -249,18 +256,18 @@ function CatalogContent() {
         <div className="lg:col-span-9 space-y-6">
           {filteredProducts.length === 0 ? (
             /* Empty State */
-            <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+            <div className="bg-slate-900 rounded-3xl border border-slate-800 p-12 text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-brand-gold">
                 <Layers className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">{t.catalog.noResults}</h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <h3 className="text-lg font-bold text-white">{t.catalog.noResults}</h3>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
                 {t.catalog.noResultsSubtitle}
               </p>
               <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                 <button
                   onClick={handleResetFilters}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold transition-colors"
                 >
                   {t.catalog.clearFilters}
                 </button>
@@ -268,7 +275,7 @@ function CatalogContent() {
                   href={photoIdUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-xl bg-brand-gold hover:bg-brand-gold-dark text-brand-navy text-xs font-bold transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl bg-brand-gold hover:bg-brand-gold-dark text-slate-950 text-xs font-bold transition-colors flex items-center gap-1.5"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   <span>{t.catalog.requestCustomQuote}</span>
@@ -276,7 +283,7 @@ function CatalogContent() {
               </div>
             </div>
           ) : (
-            /* Products Cards Grid */
+            /* Blueprint Technical Products Cards Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredProducts.map((part) => {
                 const inCart = isItemInCart(part.id);
@@ -286,17 +293,20 @@ function CatalogContent() {
                 return (
                   <div
                     key={part.id}
-                    className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/60 transition-all duration-300"
+                    className="bg-slate-900 rounded-2xl border border-slate-800 hover:border-brand-gold/60 p-5 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 relative group"
                   >
-                    <div className="space-y-3.5">
+                    <div className="cad-corner-tl opacity-40 group-hover:opacity-100 transition-opacity" />
+                    <div className="cad-corner-tr opacity-40 group-hover:opacity-100 transition-opacity" />
+
+                    <div className="space-y-4">
                       {/* Top Badges */}
-                      <div className="flex items-center justify-between gap-2 text-[11px]">
-                        <span className="font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold">
+                      <div className="flex items-center justify-between gap-2 text-[10px] font-mono">
+                        <span className="bg-slate-950 text-brand-gold px-2.5 py-0.5 rounded border border-slate-800 font-bold">
                           {part.sku}
                         </span>
-                        <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                        <span className="text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/80 flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3" />
-                          <span>{locale === "ar" ? "متوفر" : "In Stock"}</span>
+                          <span>{locale === "ar" ? "جاهز للتسليم" : "In Stock"}</span>
                         </span>
                       </div>
 
@@ -304,7 +314,7 @@ function CatalogContent() {
                       <div className="flex gap-3.5 items-start">
                         <div
                           onClick={() => setActiveModalPart(part)}
-                          className="relative w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 p-2 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                          className="relative w-16 h-16 rounded-xl bg-slate-950 border border-slate-800 p-2 shrink-0 cursor-pointer hover:border-brand-gold/50 transition-colors flex items-center justify-center"
                         >
                           <Image
                             src="/brand/logo_brandmark.svg"
@@ -314,50 +324,60 @@ function CatalogContent() {
                           />
                         </div>
 
-                        <div className="flex-1">
-                          <span className="text-[11px] font-semibold text-brand-gold block">
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[10px] font-mono font-semibold text-brand-gold block truncate">
                             {part.subcategory[locale]}
                           </span>
                           <h3
                             onClick={() => setActiveModalPart(part)}
-                            className="text-sm font-bold text-slate-900 hover:text-brand-navy transition-colors line-clamp-2 cursor-pointer leading-snug"
+                            className="text-sm font-bold text-white group-hover:text-brand-gold transition-colors line-clamp-2 cursor-pointer leading-snug"
                           >
                             {part.name[locale]}
                           </h3>
                         </div>
                       </div>
 
-                      {/* Description */}
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                        {part.description[locale]}
-                      </p>
+                      {/* Specs Blueprint Preview Table */}
+                      <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono text-slate-400 space-y-1">
+                        {Object.entries(part.specifications).slice(0, 2).map(([k, v]) => (
+                          <div key={k} className="flex justify-between items-center gap-2">
+                            <span className="truncate text-slate-500">{k}:</span>
+                            <span className="text-slate-200 font-bold truncate">{v}</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between items-center pt-1 border-t border-slate-800/60 text-[9px]">
+                          <span className="text-slate-500">ORIGIN:</span>
+                          <span className="text-brand-gold font-bold">{part.origin}</span>
+                        </div>
+                      </div>
 
                       {/* Brand Chips */}
                       <div className="flex flex-wrap items-center gap-1">
-                        <Tag className="w-3 h-3 text-slate-400" />
+                        <Tag className="w-3 h-3 text-slate-500" />
                         {part.compatibleBrands.slice(0, 3).map((brand) => (
-                          <span
+                          <button
                             key={brand}
-                            className="text-[10px] font-medium bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded"
+                            onClick={() => setSelectedBrand(brand)}
+                            className="text-[10px] font-mono font-medium bg-slate-950 hover:bg-brand-navy text-slate-300 hover:text-brand-gold px-1.5 py-0.5 rounded border border-slate-800 transition-colors"
                           >
                             {brand}
-                          </span>
+                          </button>
                         ))}
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="mt-5 pt-3.5 border-t border-slate-100 space-y-2">
+                    <div className="mt-5 pt-3.5 border-t border-slate-800/80 space-y-2">
                       <div className="flex items-center gap-2">
                         {/* Add to RFQ */}
                         <button
                           onClick={() => handleAddToCart(part)}
-                          className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                          className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold font-mono transition-all ${
                             justAdded
                               ? "bg-emerald-600 text-white"
                               : inCart
-                              ? "bg-brand-navy text-white hover:bg-brand-navy-light"
-                              : "bg-brand-gold hover:bg-brand-gold-dark text-brand-navy"
+                              ? "bg-brand-navy border border-brand-gold text-brand-gold"
+                              : "bg-brand-gold hover:bg-brand-gold-dark text-slate-950"
                           }`}
                         >
                           {justAdded ? (
@@ -383,7 +403,7 @@ function CatalogContent() {
                           href={waUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
+                          className="p-2.5 rounded-xl bg-slate-800 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-slate-700 transition-colors"
                           title={t.catalog.directWhatsApp}
                           aria-label={t.catalog.directWhatsApp}
                         >
@@ -394,7 +414,7 @@ function CatalogContent() {
                       {/* View Specs Trigger */}
                       <button
                         onClick={() => setActiveModalPart(part)}
-                        className="w-full inline-flex items-center justify-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-brand-navy transition-colors py-1"
+                        className="w-full inline-flex items-center justify-center gap-1 text-[11px] font-mono text-slate-400 hover:text-brand-gold transition-colors py-1"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>{t.catalog.viewDetails}</span>
@@ -419,13 +439,13 @@ function CatalogContent() {
 
 export default function CatalogPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
+    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
       <Header />
       <main className="flex-1">
         <Suspense
           fallback={
-            <div className="max-w-7xl mx-auto p-12 text-center text-slate-400">
-              Loading catalog...
+            <div className="max-w-7xl mx-auto p-12 text-center text-slate-500 font-mono">
+              LOADING CAD SPEC SHEETS...
             </div>
           }
         >
@@ -436,3 +456,4 @@ export default function CatalogPage() {
     </div>
   );
 }
+

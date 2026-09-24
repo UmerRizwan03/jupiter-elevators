@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Cairo } from "next/font/google";
+import { Inter, Cairo, Cinzel } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
@@ -14,6 +14,12 @@ const inter = Inter({
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
   variable: "--font-cairo",
+  display: "swap",
+});
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
   display: "swap",
 });
 
@@ -65,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cairo.variable}`}>
+    <html lang="en" className={`${inter.variable} ${cairo.variable} ${cinzel.variable}`}>
       <body className="min-h-screen flex flex-col">
         <JsonLd />
         <LanguageProvider>

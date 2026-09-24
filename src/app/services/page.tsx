@@ -147,7 +147,7 @@ export default function ServicesPage() {
             <span className="text-xs font-bold text-brand-gold uppercase tracking-wider">
               {locale === "ar" ? "حلول متكاملة لقطاع المصاعد" : "Integrated Elevator Services"}
             </span>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-black font-serif tracking-tight">
               {t.services.title}
             </h1>
             <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">

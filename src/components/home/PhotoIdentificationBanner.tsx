@@ -24,7 +24,7 @@ export function PhotoIdentificationBanner() {
                 <span>{t.photoTool.badge}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl font-black font-serif tracking-tight leading-snug">
                 {t.photoTool.title}
               </h2>
 

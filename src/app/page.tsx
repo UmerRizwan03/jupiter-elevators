@@ -3,6 +3,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/home/Hero";
+import { ElevatorShaftExplorer } from "@/components/home/ElevatorShaftExplorer";
 import { PhotoIdentificationBanner } from "@/components/home/PhotoIdentificationBanner";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { FeaturedParts } from "@/components/home/FeaturedParts";
@@ -14,6 +15,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <Hero />
+        <ElevatorShaftExplorer />
         <PhotoIdentificationBanner />
         <CategoryGrid />
         <FeaturedParts />
