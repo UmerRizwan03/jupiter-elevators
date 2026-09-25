@@ -13,90 +13,290 @@
   }
 
   body {
-    @apply bg-slate-950 text-slate-100 antialiased selection:bg-brand-gold selection:text-slate-900;
+    @apply bg-[#FAFAFA] text-slate-900 antialiased selection:bg-brand-gold selection:text-white;
   }
 }
 
-/* CAD & Engineering Blueprint Utilities */
+/* Minimalist Light Architectural Blueprint Utilities */
 .bg-blueprint-grid {
   background-image: 
-    linear-gradient(to right, rgba(197, 147, 65, 0.07) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(197, 147, 65, 0.07) 1px, transparent 1px);
+    linear-gradient(to right, rgba(11, 27, 61, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 27, 61, 0.045) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
 .bg-blueprint-grid-dense {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(11, 27, 61, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 27, 61, 0.03) 1px, transparent 1px);
   background-size: 16px 16px;
 }
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, #F3DEB3 0%, #C59341 50%, #9C6B20 100%);
+  background: linear-gradient(135deg, #B8860B 0%, #C59341 50%, #8B6508 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.text-gradient-steel {
-  background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 50%, #64748B 100%);
+.text-gradient-navy {
+  background: linear-gradient(135deg, #071228 0%, #0B1B3D 60%, #1E293B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* CAD Crosshairs & Corners */
+/* Architectural CAD Corner Markers */
 .cad-corner-tl {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 6px;
+  left: 6px;
   width: 10px;
   height: 10px;
-  border-top: 2px solid #C59341;
-  border-left: 2px solid #C59341;
+  border-top: 1.5px solid rgba(197, 147, 65, 0.7);
+  border-left: 1.5px solid rgba(197, 147, 65, 0.7);
+  pointer-events: none;
 }
 
 .cad-corner-tr {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 6px;
+  right: 6px;
   width: 10px;
   height: 10px;
-  border-top: 2px solid #C59341;
-  border-right: 2px solid #C59341;
+  border-top: 1.5px solid rgba(197, 147, 65, 0.7);
+  border-right: 1.5px solid rgba(197, 147, 65, 0.7);
+  pointer-events: none;
 }
 
 .cad-corner-bl {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 6px;
+  left: 6px;
   width: 10px;
   height: 10px;
-  border-bottom: 2px solid #C59341;
-  border-left: 2px solid #C59341;
+  border-bottom: 1.5px solid rgba(197, 147, 65, 0.7);
+  border-left: 1.5px solid rgba(197, 147, 65, 0.7);
+  pointer-events: none;
 }
 
 .cad-corner-br {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 6px;
+  right: 6px;
   width: 10px;
   height: 10px;
-  border-bottom: 2px solid #C59341;
-  border-right: 2px solid #C59341;
+  border-bottom: 1.5px solid rgba(197, 147, 65, 0.7);
+  border-right: 1.5px solid rgba(197, 147, 65, 0.7);
+  pointer-events: none;
 }
 
-/* Custom scrollbar */
+/* Custom Minimalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #C59341;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   HERO OPENING ANIMATIONS & LUXURY CAD UTILITIES
+───────────────────────────────────────────────────────────── */
+@keyframes heroFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes heroSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-35px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes heroSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(35px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes heroScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroCalloutPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(12px);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.03) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes heroFloat1 {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes heroFloat2 {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes heroFloat3 {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes lineDraw {
+  from {
+    stroke-dashoffset: 300;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-hero-fade-down {
+  animation: heroFadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-fade-up {
+  animation: heroFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-fade-in {
+  animation: heroFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-slide-left {
+  animation: heroSlideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-slide-right {
+  animation: heroSlideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-scale-up {
+  animation: heroScaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-callout {
+  animation: heroCalloutPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-hero-float-1 {
+  animation: heroFloat1 5s ease-in-out infinite;
+}
+
+.animate-hero-float-2 {
+  animation: heroFloat2 6s ease-in-out infinite 0.5s;
+}
+
+.animate-hero-float-3 {
+  animation: heroFloat3 5.5s ease-in-out infinite 1s;
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-line-draw {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: lineDraw 1.2s ease-out forwards;
+}
+
+.animation-delay-100 { animation-delay: 100ms; }
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-500 { animation-delay: 500ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+.animation-delay-700 { animation-delay: 700ms; }
+.animation-delay-800 { animation-delay: 800ms; }
+.animation-delay-900 { animation-delay: 900ms; }
+.animation-delay-1000 { animation-delay: 1000ms; }
+.animation-delay-1200 { animation-delay: 1200ms; }
+

@@ -35,23 +35,23 @@ export function FeaturedParts() {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-8 bg-slate-950 text-white border-b border-slate-800">
+    <section className="py-20 px-4 sm:px-8 bg-white text-slate-900 border-b border-slate-200">
       <div className="max-w-7xl mx-auto space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
           <div className="space-y-2">
             <span className="text-xs font-mono font-bold text-brand-gold uppercase tracking-widest">
               {locale === "ar" ? "جاهزية فورية في مستودعات المملكة" : "READY DISPATCH INVENTORY"}
             </span>
-            <h2 className="text-2xl sm:text-4xl font-black font-serif text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black font-serif text-slate-950 tracking-tight">
               {locale === "ar" ? "أبرز قطع الغيار الأكثر طلباً" : "Critical Fast-Moving Replacement Units"}
             </h2>
           </div>
           <Link
             href="/catalog"
-            className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-gold hover:text-brand-gold-light transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-navy hover:text-brand-gold transition-colors"
           >
             <span>{locale === "ar" ? "مشاهدة الكتالوج كاملاً" : "EXPLORE ALL IN-STOCK SPARES"}</span>
-            <ArrowIcon className="w-4 h-4" />
+            <ArrowIcon className="w-4 h-4 text-brand-gold" />
           </Link>
         </div>
 
@@ -65,7 +65,7 @@ export function FeaturedParts() {
             return (
               <div
                 key={part.id}
-                className="bg-slate-900 rounded-2xl border border-slate-800 p-6 flex flex-col justify-between hover:shadow-2xl hover:border-brand-gold/60 transition-all duration-300 relative group overflow-hidden"
+                className="bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/70 transition-all duration-300 relative group overflow-hidden"
               >
                 <div className="cad-corner-tl opacity-40 group-hover:opacity-100 transition-opacity" />
                 <div className="cad-corner-tr opacity-40 group-hover:opacity-100 transition-opacity" />
@@ -73,18 +73,18 @@ export function FeaturedParts() {
                 <div className="space-y-4">
                   {/* Top Badge & Origin */}
                   <div className="flex items-center justify-between gap-2 text-[10px] font-mono">
-                    <span className="inline-flex items-center gap-1 font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded border border-emerald-800/80">
+                    <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>{locale === "ar" ? "جاهز للتسليم الفوري" : "IN STOCK (KSA)"}</span>
                     </span>
-                    <span className="font-mono bg-slate-950 text-brand-gold px-2 py-0.5 rounded border border-slate-800 font-bold">
+                    <span className="font-mono bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200 font-bold">
                       {part.sku}
                     </span>
                   </div>
 
                   {/* Brand Visual & Title */}
                   <div className="flex gap-4 items-start pt-1">
-                    <div className="relative w-16 h-16 rounded-xl bg-slate-950 border border-slate-800 p-2 shrink-0 flex items-center justify-center">
+                    <div className="relative w-16 h-16 rounded-xl bg-slate-50 border border-slate-200 p-2 shrink-0 flex items-center justify-center">
                       <Image
                         src="/brand/logo_brandmark.svg"
                         alt={part.name[locale]}
@@ -96,34 +96,34 @@ export function FeaturedParts() {
                       <span className="text-[10px] font-mono font-semibold text-brand-gold block truncate">
                         {part.subcategory[locale]}
                       </span>
-                      <h3 className="text-base font-bold text-white group-hover:text-brand-gold transition-colors line-clamp-2 leading-snug font-serif">
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-navy transition-colors line-clamp-2 leading-snug font-serif">
                         {part.name[locale]}
                       </h3>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                     {part.description[locale]}
                   </p>
 
                   {/* Specs Snippet */}
-                  <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono text-slate-400 space-y-1">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[10px] font-mono text-slate-600 space-y-1">
                     {Object.entries(part.specifications).slice(0, 2).map(([k, v]) => (
                       <div key={k} className="flex justify-between items-center gap-2">
-                        <span className="truncate text-slate-500">{k}:</span>
-                        <span className="text-slate-200 font-bold truncate">{v}</span>
+                        <span className="truncate text-slate-400">{k}:</span>
+                        <span className="text-slate-900 font-bold truncate">{v}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Compatible Brands Tags */}
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                    <Tag className="w-3 h-3 text-slate-500" />
+                    <Tag className="w-3 h-3 text-slate-400" />
                     {part.compatibleBrands.slice(0, 3).map((brand) => (
                       <span
                         key={brand}
-                        className="text-[10px] font-mono bg-slate-950 text-slate-300 px-2 py-0.5 rounded border border-slate-800"
+                        className="text-[10px] font-mono bg-slate-50 text-slate-700 px-2 py-0.5 rounded border border-slate-200 font-medium"
                       >
                         {brand}
                       </span>
@@ -132,14 +132,14 @@ export function FeaturedParts() {
                 </div>
 
                 {/* Bottom Actions: Add to RFQ & WhatsApp Inquiry */}
-                <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center gap-2 font-mono">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 font-mono">
                   <button
                     onClick={() => handleAdd(part)}
-                    className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shadow-sm ${
                       justAdded
                         ? "bg-emerald-600 text-white"
                         : inCart
-                        ? "bg-brand-navy border border-brand-gold text-brand-gold"
+                        ? "bg-brand-navy text-white"
                         : "bg-brand-gold hover:bg-brand-gold-dark text-slate-950"
                     }`}
                   >
@@ -165,7 +165,7 @@ export function FeaturedParts() {
                     href={waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-xl bg-slate-800 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-slate-700 transition-colors"
+                    className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 transition-colors"
                     title={t.catalog.directWhatsApp}
                     aria-label={t.catalog.directWhatsApp}
                   >

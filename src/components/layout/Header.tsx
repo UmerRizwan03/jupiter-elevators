@@ -17,6 +17,8 @@ import {
   X,
   AlertTriangle,
   ChevronDown,
+  Search,
+  ArrowRight,
 } from "lucide-react";
 import { elevatorCategories } from "@/data/categories";
 
@@ -70,10 +72,10 @@ export function Header() {
       </div>
 
       {/* 2. MAIN NAVIGATION BAR */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-6 animate-hero-fade-down">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <div className="relative h-12 w-48 sm:h-14 sm:w-60">
+          <div className="relative h-11 w-44 sm:h-13 sm:w-56">
             <Image
               src="/brand/logo_horizontal.svg"
               alt="Jupiter Elevators"
@@ -85,9 +87,13 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-700">
-          <Link href="/" className="hover:text-brand-navy transition-colors py-1">
-            {t.nav.home}
+        <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-800">
+          <Link
+            href="/"
+            className="relative py-1 hover:text-brand-navy transition-colors font-bold text-slate-950"
+          >
+            <span>{t.nav.home}</span>
+            <span className="absolute bottom-0 inset-x-0 h-[2px] bg-[#C29B63] rounded-full" />
           </Link>
 
           {/* Categories Dropdown */}
@@ -98,14 +104,14 @@ export function Header() {
           >
             <Link
               href="/catalog"
-              className="inline-flex items-center gap-1 hover:text-brand-navy transition-colors py-1"
+              className="inline-flex items-center gap-1 hover:text-brand-navy transition-colors py-1 text-slate-700"
             >
-              <span>{t.nav.catalog}</span>
+              <span>{locale === "ar" ? "المنتجات" : "Products"}</span>
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </Link>
 
             {categoriesOpen && (
-              <div className="absolute top-full start-0 mt-1 w-80 bg-white rounded-xl shadow-xl border border-slate-100 p-2 grid gap-1 z-50">
+              <div className="absolute top-full start-0 mt-1 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 grid gap-1 z-50 animate-in fade-in zoom-in-95 duration-150">
                 <div className="px-3 py-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
                   {t.catalog.allCategories}
                 </div>
@@ -114,7 +120,7 @@ export function Header() {
                     key={cat.id}
                     href={`/catalog?category=${cat.id}`}
                     onClick={() => setCategoriesOpen(false)}
-                    className="px-3 py-2 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-navy transition-colors flex items-center justify-between"
+                    className="px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-navy transition-colors flex items-center justify-between"
                   >
                     <span>{cat.name[locale]}</span>
                   </Link>
@@ -123,46 +129,60 @@ export function Header() {
             )}
           </div>
 
-          <Link href="/services" className="hover:text-brand-navy transition-colors py-1">
-            {t.nav.services}
+          <Link
+            href="/catalog"
+            className="hover:text-brand-navy transition-colors py-1 text-slate-700"
+          >
+            {locale === "ar" ? "الماركات" : "Brands"}
           </Link>
 
-          <Link href="/about" className="hover:text-brand-navy transition-colors py-1">
+          <Link
+            href="/about"
+            className="hover:text-brand-navy transition-colors py-1 text-slate-700"
+          >
             {t.nav.about}
           </Link>
 
-          <Link href="/contact" className="hover:text-brand-navy transition-colors py-1">
+          <Link
+            href="/contact"
+            className="hover:text-brand-navy transition-colors py-1 text-slate-700"
+          >
             {t.nav.contact}
           </Link>
         </nav>
 
-        {/* Action Controls: RFQ Cart + Emergency Support */}
-        <div className="flex items-center gap-3">
-          {/* RFQ Quote Basket Button */}
+        {/* Action Controls: Search Icon, Language Switcher & Request Quote */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          {/* Quick Search Icon Trigger */}
+          <Link
+            href="/catalog"
+            className="p-2 rounded-xl text-slate-600 hover:text-brand-navy hover:bg-slate-100 transition-colors"
+            aria-label="Search Catalog"
+            title={locale === "ar" ? "البحث في الكتالوج" : "Search Catalog"}
+          >
+            <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+          </Link>
+
+          <div className="h-5 w-[1px] bg-slate-200 hidden sm:block" />
+
+          {/* Language Switcher */}
+          <div className="hidden sm:block">
+            <LanguageSwitcher className="border-slate-200 text-slate-700 hover:border-brand-gold hover:text-brand-navy" />
+          </div>
+
+          {/* Primary Request Quote CTA Button */}
           <Link
             href="/quote"
-            className="relative inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all border border-slate-200"
-            aria-label="View RFQ Quote Basket"
+            className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#C29B63] to-[#B88B4A] hover:from-[#B88B4A] hover:to-[#A3773A] text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-sm hover:shadow-md shrink-0"
           >
-            <ShoppingCart className="w-4 h-4 text-brand-navy" />
-            <span className="hidden sm:inline">{t.nav.rfqQuote}</span>
+            <span>{locale === "ar" ? "طلب تسعير" : "Request Quote"}</span>
+            <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             {totalItems > 0 && (
-              <span className="inline-flex items-center justify-center bg-brand-amber text-white font-mono text-[10px] font-bold w-5 h-5 rounded-full shadow-sm animate-pulse">
+              <span className="inline-flex items-center justify-center bg-brand-navy text-brand-gold font-mono text-[10px] font-bold w-5 h-5 rounded-full shadow-sm animate-pulse ms-1">
                 {totalItems}
               </span>
             )}
           </Link>
-
-          {/* Emergency 24/7 WhatsApp CTA */}
-          <a
-            href={emergencyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-500/20"
-          >
-            <AlertTriangle className="w-3.5 h-3.5 text-white" />
-            <span>{t.nav.emergencySupport}</span>
-          </a>
 
           {/* Mobile Menu Toggle Button */}
           <button
