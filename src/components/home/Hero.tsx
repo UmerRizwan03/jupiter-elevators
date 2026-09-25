@@ -51,14 +51,48 @@ export function Hero() {
 
   return (
     <section className="relative w-full overflow-hidden bg-white text-slate-900 pt-6 sm:pt-10 lg:pt-12">
+      
       {/* ─────────────────────────────────────────────────────────────
-          1. MAIN HERO GRID (TWO COLUMNS)
+          1. SEAMLESS FULL-BLEED 3D BACKDROP (ZERO BOXINESS)
       ───────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative">
+      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden animate-hero-scale-up animation-delay-200">
+        <Image
+          src="/images/hero/hero_3d_feathered.jpg"
+          alt="Jupiter Elevators Traction Machine 3D View"
+          fill
+          priority
+          className={`object-cover ${
+            isRtl
+              ? "object-left-bottom sm:object-left -scale-x-100"
+              : "object-right-bottom sm:object-right"
+          } select-none`}
+        />
+
+        {/* Soft Multi-Directional Gradient Washes for Natural 3D Immersion */}
+        {/* Left Side Wash (Ensures 100% contrast for text and search elements) */}
+        <div
+          className={`absolute inset-y-0 ${
+            isRtl
+              ? "right-0 bg-gradient-to-l from-white via-white/95 to-transparent"
+              : "left-0 bg-gradient-to-r from-white via-white/95 to-transparent"
+          } w-full lg:w-[50%] pointer-events-none`}
+        />
+
+        {/* Top Fade into Navbar */}
+        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white via-white/60 to-transparent pointer-events-none" />
+
+        {/* Bottom Fade into Trust Strip */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+      </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          2. MAIN CONTENT STAGE (TYPOGRAPHY & 3D INTERACTIVE CARDS)
+      ───────────────────────────────────────────────────────────── */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] lg:min-h-[660px]">
           
           {/* LEFT COLUMN: HEADLINE, SEARCH & ACTION CONTROLS */}
-          <div className="lg:col-span-6 xl:col-span-5 space-y-6 z-20 pt-4 pb-6">
+          <div className="lg:col-span-6 xl:col-span-5 space-y-6 pt-4 pb-6">
             
             {/* Eyebrow Tag */}
             <div className="flex items-center gap-3 animate-hero-slide-left animation-delay-200">
@@ -112,7 +146,7 @@ export function Hero() {
             <div className="pt-2 animate-hero-fade-up animation-delay-700">
               <form
                 onSubmit={handleSearch}
-                className="bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-slate-200/90 p-2 sm:p-2.5 flex items-center gap-2 group focus-within:border-[#C29B63] transition-all max-w-xl"
+                className="bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_14px_45px_rgba(0,0,0,0.08)] border border-slate-200/90 p-2 sm:p-2.5 flex items-center gap-2 group focus-within:border-[#C29B63] transition-all max-w-xl"
               >
                 <Search className="w-5 h-5 text-slate-400 ms-3 shrink-0 group-focus-within:text-[#C29B63] transition-colors" />
                 <input
@@ -145,7 +179,7 @@ export function Hero() {
                 <Link
                   key={item.en}
                   href={item.href}
-                  className="px-3 py-1 rounded-full bg-slate-50 hover:bg-white text-xs text-slate-600 hover:text-slate-950 border border-slate-200/90 hover:border-[#C29B63] transition-all shadow-sm font-medium"
+                  className="px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white text-xs text-slate-600 hover:text-slate-950 border border-slate-200/90 hover:border-[#C29B63] transition-all shadow-sm font-medium"
                 >
                   {item[locale]}
                 </Link>
@@ -154,20 +188,9 @@ export function Hero() {
 
           </div>
 
-          {/* RIGHT COLUMN: 3D MACHINE HERO VISUAL WITH INTERACTIVE FLOATING CALLOUTS */}
-          <div className="lg:col-span-6 xl:col-span-7 relative w-full h-[460px] sm:h-[560px] lg:h-[640px] flex items-center justify-center animate-hero-scale-up animation-delay-300">
+          {/* RIGHT COLUMN: TRANSPARENT 3D STAGE FOR FLOATING CALLOUTS & GLASS HUD */}
+          <div className="lg:col-span-6 xl:col-span-7 relative w-full h-[460px] sm:h-[560px] lg:h-[640px] flex items-center justify-center">
             
-            {/* Background 3D Machine Image */}
-            <div className="relative w-full h-full">
-              <Image
-                src="/images/hero/hero_bg_clean.jpg"
-                alt="Jupiter Elevators Traction Machine 3D Exploded View"
-                fill
-                priority
-                className="object-contain object-center lg:object-right select-none pointer-events-none"
-              />
-            </div>
-
             {/* SVG Connecting Leader Lines Overlay */}
             <svg
               className="absolute inset-0 w-full h-full pointer-events-none hidden md:block z-20"
@@ -177,41 +200,41 @@ export function Hero() {
             >
               {/* Leader Line 1: Gearbox Card to Gear Wheel */}
               <path
-                d="M 280 150 L 360 150 L 400 240"
+                d={isRtl ? "M 420 150 L 340 150 L 300 240" : "M 280 150 L 360 150 L 400 240"}
                 stroke="#C29B63"
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
                 className="animate-line-draw"
               />
-              <circle cx="400" cy="240" r="3.5" fill="#C29B63" />
+              <circle cx={isRtl ? "300" : "400"} cy="240" r="3.5" fill="#C29B63" />
 
               {/* Leader Line 2: Brake System Card to Brake Caliper */}
               <path
-                d="M 520 150 L 590 150 L 610 320"
+                d={isRtl ? "M 180 150 L 110 150 L 90 320" : "M 520 150 L 590 150 L 610 320"}
                 stroke="#C29B63"
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
                 className="animate-line-draw"
               />
-              <circle cx="610" cy="320" r="3.5" fill="#C29B63" />
+              <circle cx={isRtl ? "90" : "610"} cy="320" r="3.5" fill="#C29B63" />
 
               {/* Leader Line 3: Traction Sheave Card to Sheave Assembly */}
               <path
-                d="M 330 460 L 380 460 L 420 380"
+                d={isRtl ? "M 370 460 L 320 460 L 280 380" : "M 330 460 L 380 460 L 420 380"}
                 stroke="#C29B63"
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
                 className="animate-line-draw"
               />
-              <circle cx="420" cy="380" r="3.5" fill="#C29B63" />
+              <circle cx={isRtl ? "280" : "420"} cy="380" r="3.5" fill="#C29B63" />
             </svg>
 
             {/* ── CALLOUT CARD 1: GEARBOX (Top Left) ── */}
-            <div className="absolute top-6 sm:top-14 left-4 sm:left-10 z-30 animate-hero-callout animation-delay-600">
+            <div className={`absolute top-6 sm:top-14 ${isRtl ? "end-4 sm:end-10" : "start-4 sm:start-10"} z-30 animate-hero-callout animation-delay-600`}>
               <div className="animate-hero-float-1">
                 <Link
                   href="/catalog?category=traction-machines"
-                  className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 pe-4 shadow-[0_12px_32px_rgba(0,0,0,0.08)] border border-slate-100 hover:border-[#C29B63] transition-all flex items-center gap-3 group"
+                  className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 pe-4 shadow-[0_12px_32px_rgba(0,0,0,0.09)] border border-slate-100 hover:border-[#C29B63] transition-all flex items-center gap-3 group"
                 >
                   <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-slate-50 border border-slate-100 p-1 shrink-0 flex items-center justify-center overflow-hidden">
                     <Image
@@ -235,11 +258,11 @@ export function Hero() {
             </div>
 
             {/* ── CALLOUT CARD 2: BRAKE SYSTEM (Top Right) ── */}
-            <div className="absolute top-6 sm:top-14 right-2 sm:right-6 z-30 animate-hero-callout animation-delay-800">
+            <div className={`absolute top-6 sm:top-14 ${isRtl ? "start-2 sm:start-6" : "end-2 sm:end-6"} z-30 animate-hero-callout animation-delay-800`}>
               <div className="animate-hero-float-2">
                 <Link
                   href="/catalog?category=safety-gear"
-                  className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 pe-4 shadow-[0_12px_32px_rgba(0,0,0,0.08)] border border-slate-100 hover:border-[#C29B63] transition-all flex items-center gap-3 group"
+                  className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 pe-4 shadow-[0_12px_32px_rgba(0,0,0,0.09)] border border-slate-100 hover:border-[#C29B63] transition-all flex items-center gap-3 group"
                 >
                   <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-slate-50 border border-slate-100 p-1 shrink-0 flex items-center justify-center overflow-hidden">
                     <Image
@@ -263,11 +286,11 @@ export function Hero() {
             </div>
 
             {/* ── CALLOUT CARD 3: TRACTION SHEAVE (Bottom Left of Machine) ── */}
-            <div className="absolute bottom-24 sm:bottom-28 left-8 sm:left-24 z-30 animate-hero-callout animation-delay-1000">
+            <div className={`absolute bottom-24 sm:bottom-28 ${isRtl ? "end-8 sm:end-24" : "start-8 sm:start-24"} z-30 animate-hero-callout animation-delay-1000`}>
               <div className="animate-hero-float-3">
                 <Link
                   href="/catalog?category=traction-machines"
-                  className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 pe-4 shadow-[0_12px_32px_rgba(0,0,0,0.08)] border border-slate-100 hover:border-[#C29B63] transition-all flex items-center gap-3 group"
+                  className="bg-white/95 backdrop-blur-md rounded-2xl p-2.5 pe-4 shadow-[0_12px_32px_rgba(0,0,0,0.09)] border border-slate-100 hover:border-[#C29B63] transition-all flex items-center gap-3 group"
                 >
                   <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-slate-50 border border-slate-100 p-1 shrink-0 flex items-center justify-center overflow-hidden">
                     <Image
@@ -291,8 +314,8 @@ export function Hero() {
             </div>
 
             {/* ── FLOATING GLASS BADGE: SAFETY / RELIABILITY / EFFICIENCY (Bottom Right) ── */}
-            <div className="absolute bottom-6 sm:bottom-12 right-2 sm:right-6 z-30 animate-hero-slide-right animation-delay-900">
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-[0_15px_35px_rgba(0,0,0,0.08)] border border-white/80 space-y-3.5 max-w-[210px] sm:max-w-[220px]">
+            <div className={`absolute bottom-6 sm:bottom-12 ${isRtl ? "start-2 sm:start-6" : "end-2 sm:end-6"} z-30 animate-hero-slide-right animation-delay-900`}>
+              <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.09)] border border-white/80 space-y-3.5 max-w-[210px] sm:max-w-[220px]">
                 {/* Item 1: Safety */}
                 <div className="flex items-start gap-2.5">
                   <div className="w-7 h-7 rounded-lg bg-[#C29B63]/10 text-[#C29B63] flex items-center justify-center shrink-0 mt-0.5">
@@ -346,10 +369,10 @@ export function Hero() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. BOTTOM TRUST STRIP & MAJOR OEM BRANDS SECTION
+          3. BOTTOM TRUST STRIP & MAJOR OEM BRANDS SECTION
       ───────────────────────────────────────────────────────────── */}
-      <div className="w-full border-t border-slate-200/90 bg-white py-5 px-4 sm:px-8 mt-4 animate-hero-fade-up animation-delay-1000">
-        <div className="max-w-[1400px] mx-auto flex flex-col xl:flex-row items-center justify-between gap-6">
+      <div className="w-full border-t border-slate-200/90 bg-white/95 backdrop-blur-sm py-5 px-4 sm:px-8 mt-4 relative z-10 animate-hero-fade-up animation-delay-1000">
+        <div className="max-w-[1440px] mx-auto flex flex-col xl:flex-row items-center justify-between gap-6">
           
           {/* LEFT: 4 VALUE PILLARS (CIRCULAR GOLD ICONS) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center w-full xl:w-auto">
