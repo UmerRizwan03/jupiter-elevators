@@ -168,7 +168,7 @@ export function ElevatorShaftExplorer() {
               <span className="w-2 h-2 rounded-full bg-brand-gold animate-ping" />
               <span>{locale === "ar" ? "نظام استكشاف البئر التفاعلي" : "Interactive Shaft Anatomy"}</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight text-slate-950">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black font-sans tracking-tight text-slate-950">
               {locale === "ar" ? "تشريح مصعد الركاب: المكونات ومنظومة الأمان" : "Explore Complete Elevator Shaft Anatomy"}
             </h2>
             <p className="text-slate-600 text-xs sm:text-sm max-w-2xl leading-relaxed font-sans">

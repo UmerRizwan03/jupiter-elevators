@@ -15,7 +15,7 @@ import {
   Tag,
   ArrowRight,
   ArrowLeft,
-  Cpu,
+  Sparkles,
 } from "lucide-react";
 
 export function FeaturedParts() {
@@ -36,19 +36,21 @@ export function FeaturedParts() {
 
   return (
     <section className="py-20 px-4 sm:px-8 bg-white text-slate-900 border-b border-slate-200">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="max-w-[1440px] mx-auto space-y-12">
+        
+        {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <span className="text-xs font-mono font-bold text-brand-gold uppercase tracking-widest">
               {locale === "ar" ? "جاهزية فورية في مستودعات المملكة" : "READY DISPATCH INVENTORY"}
             </span>
-            <h2 className="text-2xl sm:text-4xl font-black font-serif text-slate-950 tracking-tight">
-              {locale === "ar" ? "أبرز قطع الغيار الأكثر طلباً" : "Critical Fast-Moving Replacement Units"}
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight font-sans">
+              {locale === "ar" ? "قطع الغيار الأكثر طلباً" : "FAST-MOVING SPARES"}
             </h2>
           </div>
           <Link
             href="/catalog"
-            className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-navy hover:text-brand-gold transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-mono font-bold text-slate-900 hover:text-brand-gold transition-colors"
           >
             <span>{locale === "ar" ? "مشاهدة الكتالوج كاملاً" : "EXPLORE ALL IN-STOCK SPARES"}</span>
             <ArrowIcon className="w-4 h-4 text-brand-gold" />
@@ -65,11 +67,8 @@ export function FeaturedParts() {
             return (
               <div
                 key={part.id}
-                className="bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/70 transition-all duration-300 relative group overflow-hidden"
+                className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold transition-all duration-300 relative group overflow-hidden"
               >
-                <div className="cad-corner-tl opacity-40 group-hover:opacity-100 transition-opacity" />
-                <div className="cad-corner-tr opacity-40 group-hover:opacity-100 transition-opacity" />
-
                 <div className="space-y-4">
                   {/* Top Badge & Origin */}
                   <div className="flex items-center justify-between gap-2 text-[10px] font-mono">
@@ -96,7 +95,7 @@ export function FeaturedParts() {
                       <span className="text-[10px] font-mono font-semibold text-brand-gold block truncate">
                         {part.subcategory[locale]}
                       </span>
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-navy transition-colors line-clamp-2 leading-snug font-serif">
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-gold transition-colors line-clamp-2 leading-snug font-sans">
                         {part.name[locale]}
                       </h3>
                     </div>
@@ -139,7 +138,7 @@ export function FeaturedParts() {
                       justAdded
                         ? "bg-emerald-600 text-white"
                         : inCart
-                        ? "bg-brand-navy text-white"
+                        ? "bg-slate-900 text-white"
                         : "bg-brand-gold hover:bg-brand-gold-dark text-slate-950"
                     }`}
                   >
@@ -180,4 +179,3 @@ export function FeaturedParts() {
     </section>
   );
 }
-
