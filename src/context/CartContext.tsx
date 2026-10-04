@@ -1,102 +1,94 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { ElevatorPart, RFQItem } from "@/types/catalog";
-import { elevatorCategories } from "@/data/categories";
+import type { ElevatorPart, RfqCartItem } from "@/types/catalog";
 
 interface CartContextType {
-  items: RFQItem[];
-  addToCart: (part: ElevatorPart, quantity?: number, notes?: string) => void;
-  removeFromCart: (partId: string) => void;
+  items: RfqCartItem[];
+  addItem: (part: ElevatorPart, quantity?: number, notes?: string) => void;
+  removeItem: (partId: string) => void;
   updateQuantity: (partId: string, quantity: number) => void;
   clearCart: () => void;
-  totalItems: number;
-  totalQuantity: number;
-  isItemInCart: (partId: string) => boolean;
+  totalItemsCount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const STORAGE_KEY = "jupiter_elevators_rfq_cart";
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<RFQItem[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [items, setItems] = useState<RfqCartItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     try {
-      const stored = localStorage.getItem("jupiter_rfq_cart");
-      if (stored) {
-        setItems(JSON.parse(stored));
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        // Restore browser-only persisted state after hydration to keep SSR markup consistent.
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is an external client-side store.
+        setItems(JSON.parse(saved));
       }
     } catch (e) {
       console.error("Failed to load RFQ cart from localStorage", e);
+    } finally {
+      setIsLoaded(true);
     }
   }, []);
 
-  const saveItems = (newItems: RFQItem[]) => {
-    setItems(newItems);
-    try {
-      localStorage.setItem("jupiter_rfq_cart", JSON.stringify(newItems));
-    } catch (e) {
-      console.error("Failed to save RFQ cart to localStorage", e);
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch (e) {
+        console.error("Failed to persist RFQ cart to localStorage", e);
+      }
     }
+  }, [items, isLoaded]);
+
+  const addItem = (part: ElevatorPart, quantity: number = 1, notes?: string) => {
+    setItems((prev) => {
+      const existingIndex = prev.findIndex((item) => item.part.id === part.id);
+      if (existingIndex > -1) {
+        const updated = [...prev];
+        updated[existingIndex].quantity += quantity;
+        if (notes) updated[existingIndex].notes = notes;
+        return updated;
+      }
+      return [...prev, { part, quantity, notes }];
+    });
   };
 
-  const addToCart = (part: ElevatorPart, quantity = 1, notes?: string) => {
-    const category = elevatorCategories.find((c) => c.id === part.categoryId);
-    const existingIndex = items.findIndex((i) => i.partId === part.id);
-
-    if (existingIndex > -1) {
-      const updated = [...items];
-      updated[existingIndex].quantity += quantity;
-      if (notes) updated[existingIndex].notes = notes;
-      saveItems(updated);
-    } else {
-      const newItem: RFQItem = {
-        partId: part.id,
-        sku: part.sku,
-        name: part.name,
-        categoryName: category?.name || { en: "Spare Part", ar: "قطعة غيار" },
-        quantity: Math.max(1, quantity),
-        image: part.image,
-        notes,
-      };
-      saveItems([...items, newItem]);
-    }
-  };
-
-  const removeFromCart = (partId: string) => {
-    saveItems(items.filter((i) => i.partId !== partId));
+  const removeItem = (partId: string) => {
+    setItems((prev) => prev.filter((item) => item.part.id !== partId));
   };
 
   const updateQuantity = (partId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(partId);
+      removeItem(partId);
       return;
     }
-    saveItems(items.map((i) => (i.partId === partId ? { ...i, quantity } : i)));
+    setItems((prev) =>
+      prev.map((item) =>
+        item.part.id === partId ? { ...item, quantity } : item
+      )
+    );
   };
 
   const clearCart = () => {
-    saveItems([]);
+    setItems([]);
   };
 
-  const isItemInCart = (partId: string) => items.some((i) => i.partId === partId);
-
-  const totalItems = items.length;
-  const totalQuantity = items.reduce((acc, i) => acc + i.quantity, 0);
+  const totalItemsCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <CartContext.Provider
       value={{
         items,
-        addToCart,
-        removeFromCart,
+        addItem,
+        removeItem,
         updateQuantity,
         clearCart,
-        totalItems,
-        totalQuantity,
-        isItemInCart,
+        totalItemsCount,
       }}
     >
       {children}

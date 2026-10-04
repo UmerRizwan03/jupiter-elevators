@@ -39,6 +39,7 @@ Thumbs.db
 .idea/
 
 # Scratch & temporary extraction files in root
+/scratch/
 /logo_original.png
 /brandmark_transparent.png
 /logo_full_transparent.png

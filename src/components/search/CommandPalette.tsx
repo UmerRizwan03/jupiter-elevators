@@ -1,0 +1,227 @@
+"use client";
+
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Search, X, Layers, CornerDownLeft } from "lucide-react";
+import type { Locale } from "@/lib/i18n";
+import { getAllParts } from "@/lib/catalog";
+import type { ElevatorPart } from "@/types/catalog";
+
+interface CommandPaletteProps {
+  lang: Locale;
+}
+
+export function CommandPalette({ lang }: CommandPaletteProps) {
+  const router = useRouter();
+  const isRtl = lang === "ar";
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const parts = useMemo(() => getAllParts(), []);
+
+  // Listen for global shortcut (Cmd+K / Ctrl+K) or custom event
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (isOpen) {
+          setIsOpen(false);
+        } else {
+          setQuery("");
+          setSelectedIndex(0);
+          setIsOpen(true);
+        }
+      }
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleCustomOpen = () => {
+      setQuery("");
+      setSelectedIndex(0);
+      setIsOpen(true);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("open-command-palette", handleCustomOpen);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("open-command-palette", handleCustomOpen);
+    };
+  }, [isOpen]);
+
+  // Focus input when opened
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [isOpen]);
+
+  // Filter parts
+  const filteredParts = useMemo(() => {
+    if (!query.trim()) {
+      return parts.slice(0, 6); // show first 6 featured
+    }
+    const q = query.trim().toLowerCase();
+    return parts
+      .filter((p) => {
+        return (
+          p.sku.toLowerCase().includes(q) ||
+          p.name.en.toLowerCase().includes(q) ||
+          p.name.ar.toLowerCase().includes(q) ||
+          p.subcategory.en.toLowerCase().includes(q) ||
+          p.subcategory.ar.toLowerCase().includes(q) ||
+          p.compatibleBrands.some((b) => b.toLowerCase().includes(q))
+        );
+      })
+      .slice(0, 8);
+  }, [parts, query]);
+
+  // Key navigation (up, down, enter)
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev + 1) % Math.max(1, filteredParts.length));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev - 1 + filteredParts.length) % Math.max(1, filteredParts.length));
+    } else if (e.key === "Enter" && filteredParts[selectedIndex]) {
+      e.preventDefault();
+      handleSelect(filteredParts[selectedIndex]);
+    }
+  };
+
+  const handleSelect = (part: ElevatorPart) => {
+    setIsOpen(false);
+    router.push(`/${lang}/catalog/${part.slug}`);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-24 px-4 p-4 animate-in fade-in duration-150">
+      <div
+        className="w-full max-w-2xl bg-white rounded-2xl border border-slate-200/90 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Search Input Bar */}
+        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 gap-3">
+          <Search className="w-5 h-5 text-[#C59341] shrink-0" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedIndex(0);
+            }}
+            onKeyDown={handleInputKeyDown}
+            placeholder={
+              isRtl
+                ? "ابحث برقم القطعة (SKU)، اسم المكون، أو الماركة (Monarch, Otis, KONE)..."
+                : "Search by SKU, part name, or brand (Monarch, Otis, KONE)..."
+            }
+            className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none font-medium"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="p-1 rounded text-slate-400 hover:text-slate-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+          <span className="hidden sm:inline-flex text-[10px] font-mono text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+            ESC
+          </span>
+        </div>
+
+        {/* Results List */}
+        <div className="max-h-[380px] overflow-y-auto p-2 divide-y divide-slate-50">
+          <div className="px-3 py-1.5 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+            <span>{query ? (isRtl ? "نتائج البحث" : "SEARCH RESULTS") : (isRtl ? "مكونات مميزة" : "POPULAR COMPONENTS")}</span>
+            <span>[{filteredParts.length}]</span>
+          </div>
+
+          {filteredParts.length > 0 ? (
+            filteredParts.map((part, idx) => {
+              const isSelected = idx === selectedIndex;
+              return (
+                <div
+                  key={part.id}
+                  onClick={() => handleSelect(part)}
+                  onMouseEnter={() => setSelectedIndex(idx)}
+                  className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${
+                    isSelected ? "bg-slate-100" : "hover:bg-slate-50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0 pr-2">
+                    <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                      <Layers className="w-5 h-5 text-slate-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900 text-white">
+                          {part.sku}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400 truncate">
+                          {"// "}{part.subcategory[lang]}
+                        </span>
+                      </div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">
+                        {part.name[lang]}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    {part.inStock ? (
+                      <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                        STOCK
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                        ORDER
+                      </span>
+                    )}
+                    <CornerDownLeft className={`w-3.5 h-3.5 ${isSelected ? "text-slate-900" : "text-slate-300"}`} />
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="p-8 text-center space-y-2">
+              <p className="text-xs font-mono text-slate-500">
+                NO COMPONENTS MATCHING &ldquo;{query}&rdquo;
+              </p>
+              <p className="text-[11px] text-slate-400">
+                Try searching for Monarch, Inverter, Governor, or Roller
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer shortcuts helper */}
+        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
+          <div className="flex items-center gap-3">
+            <span>↑↓ Navigate</span>
+            <span>↵ Select</span>
+            <span>ESC Close</span>
+          </div>
+          <span className="text-[#C59341] font-semibold">JUPITER ELEVATORS SPEC PALETTE</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function openCommandPalette() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("open-command-palette"));
+  }
+}
+

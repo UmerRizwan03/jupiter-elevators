@@ -1,333 +1,251 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "@/context/LanguageContext";
-import {
-  Search,
-  ArrowRight,
-  ArrowLeft,
-  ChevronDown,
-  Sparkles,
-} from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
+import type { Locale, Dictionary } from "@/lib/i18n";
+import { BorderBeam } from "@/components/ui/border-beam";
 
-const oemBrands = [
-  "All Brands",
-  "Otis",
-  "Kone",
-  "Schindler",
-  "Mitsubishi",
-  "Thyssenkrupp",
-  "Monarch",
-  "Fermator",
-  "Torin Drive",
-  "STEP",
-  "Yaskawa",
-  "Montanari",
-];
+interface HeroProps {
+  lang: Locale;
+  dict: Dictionary;
+  compatibleBrands?: string[];
+}
 
-const elevatorTypes = [
-  { en: "All Elevator Types", ar: "جميع أنواع المصاعد", val: "" },
-  { en: "Passenger MRL", ar: "مصاعد ركاب MRL", val: "MRL" },
-  { en: "Traction High-Speed", ar: "مصاعد جر عالية السرعة", val: "Traction" },
-  { en: "Freight & Heavy Cargo", ar: "مصاعد بضائع وشحن", val: "Freight" },
-  { en: "Hydraulic Lifts", ar: "مصاعد هيدروليكية", val: "Hydraulic" },
-  { en: "Villa & Panoramic", ar: "مصاعد فلل وبانوراما", val: "Villa" },
-];
-
-export function Hero() {
-  const { locale, isRtl } = useLanguage();
+export function Hero({ lang, compatibleBrands = [] }: HeroProps) {
   const router = useRouter();
-  const ArrowIcon = isRtl ? ArrowLeft : ArrowRight;
+  const isRtl = lang === "ar";
 
-  const [partNumber, setPartNumber] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("All Brands");
-  const [selectedType, setSelectedType] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedBrand, setSelectedBrand] = useState("all");
+  const [selectedModel, setSelectedModel] = useState("all");
 
-  const handleFinderSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (selectedCategory !== "all") params.set("category", selectedCategory);
+    if (selectedBrand !== "all") params.set("brand", selectedBrand);
+    if (selectedModel !== "all") params.set("model", selectedModel);
 
-    if (selectedBrand && selectedBrand !== "All Brands") {
-      params.set("brand", selectedBrand);
-    }
-
-    const queryParts = [partNumber.trim(), keyword.trim(), selectedType.trim()].filter(Boolean);
-    if (queryParts.length > 0) {
-      params.set("q", queryParts.join(" "));
-    }
-
-    router.push(`/catalog?${params.toString()}`);
+    router.push(`/${lang}/catalog?${params.toString()}`);
   };
 
+  const categories = [
+    { id: "traction-machines", name: isRtl ? "أنظمة الجر والماكينات" : "Traction Machines" },
+    { id: "elevator-controllers", name: isRtl ? "لوحات التحكم والإنفرتر" : "Controllers & Inverters" },
+    { id: "door-operators", name: isRtl ? "أنظمة ومشغلات الأبواب" : "Door Operators" },
+    { id: "safety-gear-governors", name: isRtl ? "مكونات الأمان والبراشوت" : "Safety Gear & Governors" },
+    { id: "push-buttons-indicators", name: isRtl ? "الأزرار وشاشات الكابينة" : "Buttons & Indicators" },
+    { id: "wire-ropes-suspension", name: isRtl ? "حبال الجر وكابلات السفر" : "Wire Ropes & Cables" },
+  ];
+
+  const defaultCompatibleBrands = [
+    "KONE",
+    "OTIS",
+    "Schindler",
+    "Mitsubishi",
+    "Fermator",
+    "Wittur",
+    "Monarch",
+    "Step",
+  ];
+  const brandList = compatibleBrands && compatibleBrands.length > 0 ? compatibleBrands : defaultCompatibleBrands;
+
   return (
-    <section className="relative w-full overflow-hidden bg-[#FAF9F6] text-slate-900 pt-6 sm:pt-10 pb-0 border-b border-slate-200">
-      
-      {/* ─────────────────────────────────────────────────────────────
-          1. TOP GIANT WORDMARK (Slide 1 & 3: "AUTOPARTS" composition)
-      ───────────────────────────────────────────────────────────── */}
-      <div className="w-full text-center relative z-0 select-none px-4">
-        <h1 className="text-[14vw] sm:text-[15vw] font-black tracking-tighter uppercase font-sans leading-[0.82] text-center whitespace-nowrap">
-          {locale === "ar" ? (
-            <>
-              <span className="text-[#C59341]">قطع غيار</span>{" "}
-              <span className="text-slate-950">المصاعد</span>
-            </>
-          ) : (
-            <>
-              <span className="text-[#C59341]">ELEVATOR</span>
-              <span className="text-slate-950">PARTS</span>
-            </>
-          )}
-        </h1>
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          2. CENTER 3D COMPONENT STAGE & DYNAMIC WAVE SWEEP
-      ───────────────────────────────────────────────────────────── */}
-      <div className="relative w-full max-w-[1440px] mx-auto min-h-[380px] sm:min-h-[480px] lg:min-h-[540px] flex items-center justify-center -mt-[4vw] sm:-mt-[5vw] z-10">
-        
-        {/* Dynamic Contour Wave Lines (Red/Gold thread wave from Slide 1 & 3) */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center z-0 opacity-40">
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 1440 600"
-            fill="none"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M-100,280 C300,420 500,140 720,280 C940,420 1140,160 1540,290"
-              stroke="#C59341"
-              strokeWidth="2"
-              strokeDasharray="6 4"
-            />
-            <path
-              d="M-100,295 C300,435 500,155 720,295 C940,435 1140,175 1540,305"
-              stroke="#C59341"
-              strokeWidth="1.2"
-              strokeOpacity="0.7"
-            />
-            <path
-              d="M-100,310 C300,450 500,170 720,310 C940,450 1140,190 1540,320"
-              stroke="#C59341"
-              strokeWidth="1"
-              strokeOpacity="0.5"
-            />
-            <path
-              d="M-100,325 C300,465 500,185 720,325 C940,465 1140,205 1540,335"
-              stroke="#C59341"
-              strokeWidth="0.8"
-              strokeOpacity="0.3"
-            />
-          </svg>
-        </div>
-
-        {/* ── LEFT BALANCED MICRO-COPY (Slide 1 & 3 exact placement) ── */}
-        <div className="absolute start-4 sm:start-12 lg:start-24 top-1/2 -translate-y-1/2 z-20 hidden md:block text-start space-y-8 font-mono">
-          <div>
-            <span className="text-xs lg:text-sm font-bold text-slate-800 tracking-wider block">
-              {locale === "ar" ? "أسعار جملة مباشرة" : "Direct Factory Prices"}
-            </span>
-            <span className="text-[11px] text-slate-400 block mt-0.5">
-              {locale === "ar" ? "بدون وسطاء من كبرى المصانع" : "Zero Middlemen Markups"}
-            </span>
-          </div>
-
-          <div className="pt-4 border-t border-slate-200">
-            <span className="text-[10px] text-brand-gold font-bold uppercase tracking-widest block">
-              {locale === "ar" ? "سجل تجاري معتمد" : "OFFICIAL SAUDI CR"}
-            </span>
-            <span className="text-xs font-bold text-slate-900 block mt-0.5">
-              2050078848
-            </span>
-          </div>
-        </div>
-
-        {/* ── CENTER 3D ELEVATOR BRAKE & TRACTION SHEAVE CENTERPIECE ── */}
-        <div className="relative z-10 w-[300px] h-[300px] sm:w-[440px] sm:h-[440px] lg:w-[520px] lg:h-[520px] flex items-center justify-center">
-          {/* Subtle Ground Radial Shadow */}
-          <div className="absolute bottom-4 inset-x-12 h-8 bg-slate-900/10 rounded-full blur-xl pointer-events-none" />
-
-          <div className="relative w-full h-full transform hover:scale-[1.02] transition-transform duration-500">
-            <Image
-              src="/images/hero/hero_elevator_centerpiece.jpg"
-              alt="Jupiter Elevators Traction Sheave & Disc Brake Assembly"
-              fill
-              priority
-              className="object-contain"
-            />
-          </div>
-        </div>
-
-        {/* ── RIGHT BALANCED MICRO-COPY (Slide 1 & 3 exact placement) ── */}
-        <div className="absolute end-4 sm:end-12 lg:end-24 top-1/2 -translate-y-1/2 z-20 hidden md:block text-end space-y-8 font-mono">
-          <div>
-            <span className="text-xs lg:text-sm font-bold text-slate-800 tracking-wider block">
-              {locale === "ar" ? "شحن فوري بالمملكة" : "Fast KSA Delivery"}
-            </span>
-            <span className="text-[11px] text-slate-400 block mt-0.5">
-              {locale === "ar" ? "الدمام · الرياض · جدة" : "Same-Day Dispatch"}
-            </span>
-          </div>
-
-          <div className="pt-4 border-t border-slate-200">
-            <span className="text-[10px] text-brand-gold font-bold uppercase tracking-widest block">
-              {locale === "ar" ? "المستودع المركزي" : "CENTRAL WAREHOUSE"}
-            </span>
-            <span className="text-xs font-bold text-slate-900 block mt-0.5">
-              {locale === "ar" ? "الدمام، المنطقة الشرقية" : "Dammam, Eastern Province"}
-            </span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          3. CENTER CALL-TO-ACTION (Slide 3: "All Parts in One Place! / CATALOG")
-      ───────────────────────────────────────────────────────────── */}
-      <div className="text-center relative z-20 -mt-6 sm:-mt-8 mb-8 space-y-3">
-        <p className="text-xs sm:text-sm font-mono font-bold tracking-wider text-slate-600 uppercase">
-          {locale === "ar" ? "جميع قطع الغيار في مكان واحد!" : "All Parts in One Place!"}
-        </p>
-
-        <div>
-          <Link
-            href="/catalog"
-            className="inline-flex items-center justify-center px-10 py-3.5 rounded-xl bg-[#C59341] hover:bg-[#b08134] text-slate-950 font-black text-xs sm:text-sm font-mono tracking-widest uppercase transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-          >
-            <span>{locale === "ar" ? "الكتالوج" : "CATALOG"}</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          4. BOTTOM FLOATING SEARCH DOCK (Slide 3 exact 5-box bar)
-      ───────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-20 mb-8">
-        <form
-          onSubmit={handleFinderSubmit}
-          className="bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-slate-200/90 p-2 sm:p-2.5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2 items-center"
+    <section className="relative w-full overflow-hidden pt-10 pb-16 md:pt-16 md:pb-24">
+      {/* Full-Width JUPITER Watermark Background Element across the Bottom of Hero */}
+      <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden pointer-events-none select-none z-0 leading-none">
+        <svg
+          viewBox="0 0 1440 200"
+          className="w-full h-auto max-h-[160px] sm:max-h-[220px] md:max-h-[260px] text-slate-200/50 fill-current block"
+          preserveAspectRatio="none"
         >
-          {/* Field 1: Enter Part Number / SKU */}
-          <div className="lg:col-span-3">
-            <input
-              type="text"
-              value={partNumber}
-              onChange={(e) => setPartNumber(e.target.value)}
-              placeholder={locale === "ar" ? "رقم القطعة / SKU" : "Enter Part number / SKU"}
-              className="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 focus:border-[#C59341] focus:outline-none p-3.5 transition-all"
-            />
-          </div>
-
-          {/* Field 2: Search by part name / keyword */}
-          <div className="lg:col-span-3">
-            <input
-              type="text"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder={locale === "ar" ? "البحث باسم المكون..." : "Search by part name..."}
-              className="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 focus:border-[#C59341] focus:outline-none p-3.5 transition-all"
-            />
-          </div>
-
-          {/* Field 3: Select car/elevator brand */}
-          <div className="lg:col-span-2">
-            <select
-              value={selectedBrand}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 focus:border-[#C59341] focus:outline-none p-3.5 transition-all cursor-pointer"
-            >
-              {oemBrands.map((brand) => (
-                <option key={brand} value={brand}>
-                  {brand === "All Brands" ? (locale === "ar" ? "الماركة (الكل)" : "Select brand ▾") : brand}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Field 4: Select elevator model / type */}
-          <div className="lg:col-span-2">
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-slate-900 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 focus:border-[#C59341] focus:outline-none p-3.5 transition-all cursor-pointer"
-            >
-              {elevatorTypes.map((type) => (
-                <option key={type.val} value={type.val}>
-                  {type[locale]}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Field 5: Red/Gold Action Button: Find Part */}
-          <div className="lg:col-span-2">
-            <button
-              type="submit"
-              className="w-full py-3.5 px-4 rounded-xl bg-[#C59341] hover:bg-[#b08134] text-slate-950 font-bold text-xs sm:text-sm font-mono uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm"
-            >
-              <Search className="w-4 h-4" />
-              <span>{locale === "ar" ? "بحث القطع" : "Find part"}</span>
-            </button>
-          </div>
-        </form>
+          <text
+            x="50%"
+            y="92%"
+            textAnchor="middle"
+            textLength="1400"
+            lengthAdjust="spacing"
+            className="font-black text-[200px] uppercase font-sans"
+          >
+            JUPITER
+          </text>
+        </svg>
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────
-          5. ANGLED BRAND RIBBON TICKER (Slide 1 exact bottom marquee)
-      ───────────────────────────────────────────────────────────── */}
-      <div className="w-full overflow-hidden bg-slate-950 text-white py-4 relative z-20 border-t border-slate-800">
-        <div className="flex items-center gap-8 whitespace-nowrap text-sm sm:text-base font-black font-mono tracking-wider animate-marquee select-none">
-          <span className="flex items-center gap-4 text-[#C59341]">
-            <span>★</span>
-            <span className="text-white">JUPITER ELEVATORS</span>
-            <span>★</span>
-            <span className="text-white">جوبيتر للمصاعد</span>
-            <span>★</span>
-            <span className="text-white">ELEVATOR SPARE PARTS</span>
-            <span>★</span>
-            <span className="text-white">DAMMAM CENTRAL HUB</span>
-            <span>★</span>
-            <span className="text-white">OTIS</span>
-            <span>★</span>
-            <span className="text-white">KONE</span>
-            <span>★</span>
-            <span className="text-white">SCHINDLER</span>
-            <span>★</span>
-            <span className="text-white">MITSUBISHI</span>
-            <span>★</span>
-            <span className="text-white">FERMATOR</span>
-            <span>★</span>
-            <span className="text-white">MONARCH</span>
-          </span>
-          <span className="flex items-center gap-4 text-[#C59341]">
-            <span>★</span>
-            <span className="text-white">JUPITER ELEVATORS</span>
-            <span>★</span>
-            <span className="text-white">جوبيتر للمصاعد</span>
-            <span>★</span>
-            <span className="text-white">ELEVATOR SPARE PARTS</span>
-            <span>★</span>
-            <span className="text-white">DAMMAM CENTRAL HUB</span>
-            <span>★</span>
-            <span className="text-white">OTIS</span>
-            <span>★</span>
-            <span className="text-white">KONE</span>
-            <span>★</span>
-            <span className="text-white">SCHINDLER</span>
-            <span>★</span>
-            <span className="text-white">MITSUBISHI</span>
-            <span>★</span>
-            <span className="text-white">FERMATOR</span>
-            <span>★</span>
-            <span className="text-white">MONARCH</span>
-          </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Column: Typography & Structured Search Card (7 cols) */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Breadcrumb breadline */}
+            <div className="flex items-center gap-2 text-[10px] sm:text-xs font-mono font-semibold tracking-wider text-slate-400 uppercase">
+              <span>{isRtl ? "مكونات المصاعد" : "ELEVATOR COMPONENTS"}</span>
+              <span className="text-slate-300">/</span>
+              <span>{isRtl ? "قطع الغيار" : "SPARE PARTS"}</span>
+              <span className="text-slate-300">/</span>
+              <span className="text-[#C59341] font-bold">
+                {isRtl ? "التحديث والتطوير" : "MODERNIZATION"}
+              </span>
+            </div>
+
+            {/* Giant Hero Headline */}
+            <div className="space-y-1">
+              <h1 className={`max-w-full ${isRtl ? "font-sans" : "font-serif"} text-5xl sm:text-6xl md:text-7xl lg:text-[5.25rem] xl:text-[6.25rem] 2xl:text-[7rem] font-semibold text-slate-900 tracking-[-0.055em] leading-[0.92] uppercase`}>
+                {isRtl ? (
+                  <>
+                    <span>{"نرتقي"}</span>
+                    <br />
+                    <span className="text-[#C59341]">{"فـوق"}</span>
+                    <br />
+                    <span>{"التوقعـات."}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+                      <span className="hero-word-reveal hero-word-reveal-1 inline-block">
+                        ELEVATING
+                      </span>
+                    </span>
+                    <span className="block translate-x-[0.18em] overflow-hidden pb-[0.08em] -mb-[0.08em] text-[#C59341]">
+                      <span className="hero-word-reveal hero-word-reveal-2 inline-block italic">
+                        BEYOND
+                      </span>
+                    </span>
+                    <span className="block translate-x-[0.42em] overflow-hidden pb-[0.08em] -mb-[0.08em] text-[0.72em] tracking-[-0.04em]">
+                      <span className="hero-word-reveal hero-word-reveal-3 inline-block">
+                        EXPECTATIONS.
+                      </span>
+                    </span>
+                  </>
+                )}
+              </h1>
+            </div>
+
+            {/* Subtitle */}
+            <p className="text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed font-normal">
+              {isRtl
+                ? "قطع غيار ومكونات مصاعد أصلية وموثوقة لعمليات التركيب، الصيانة الدورية، والتحديث الشامل."
+                : "Reliable elevator spare parts for installation, maintenance and modernization."}
+            </p>
+
+            {/* Structured Search Box Card with Animated Border Beam */}
+            <div className="relative max-w-lg rounded-2xl p-[1.5px] overflow-hidden shadow-xl z-30 group">
+              {/* Animated Luminous Border Beam */}
+              <BorderBeam
+                duration={6}
+                colorFrom="#C59341"
+                colorTo="#FDE68A"
+                glow
+              />
+
+              {/* Inner Search Box Content */}
+              <div className="bg-white rounded-[15px] p-4 sm:p-5 relative z-10 border border-slate-100/80">
+                <form onSubmit={handleSearchSubmit} className="space-y-3">
+                  {/* Search Input Bar */}
+                  <div className="relative flex items-center">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={
+                        isRtl
+                          ? "ابحث برقم القطعة، الموديل، أو كلمة بحث..."
+                          : "Search by part number, component, model or keyword..."
+                      }
+                      className="w-full h-11 pl-10 pr-24 rtl:pl-24 rtl:pr-10 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all font-medium"
+                    />
+                    <button
+                      type="submit"
+                      className="absolute right-1.5 rtl:right-auto rtl:left-1.5 h-8 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                    >
+                      {isRtl ? "بحث" : "Search"}
+                    </button>
+                  </div>
+
+                  {/* Dropdowns Filters Row */}
+                  <div className="grid grid-cols-3 gap-2 pt-1">
+                    {/* Category Dropdown */}
+                    <div className="relative">
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-full h-10 px-2.5 pr-7 rtl:pr-2.5 rtl:pl-7 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900 appearance-none cursor-pointer truncate"
+                      >
+                        <option value="all">
+                          {isRtl ? "اختر الفئة" : "Select Category"}
+                        </option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 rtl:right-auto rtl:left-2 top-3 pointer-events-none" />
+                    </div>
+
+                    {/* Brand Dropdown */}
+                    <div className="relative">
+                      <select
+                        value={selectedBrand}
+                        onChange={(e) => setSelectedBrand(e.target.value)}
+                        className="w-full h-10 px-2.5 pr-7 rtl:pr-2.5 rtl:pl-7 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900 appearance-none cursor-pointer truncate"
+                      >
+                        <option value="all">
+                          {isRtl ? "اختر الماركة" : "Select Brand"}
+                        </option>
+                        {brandList.map((brand) => (
+                          <option key={brand} value={brand}>
+                            {brand}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 rtl:right-auto rtl:left-2 top-3 pointer-events-none" />
+                    </div>
+
+                    {/* Model Dropdown */}
+                    <div className="relative">
+                      <select
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        className="w-full h-10 px-2.5 pr-7 rtl:pr-2.5 rtl:pl-7 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900 appearance-none cursor-pointer truncate"
+                      >
+                        <option value="all">
+                          {isRtl ? "اختر الموديل" : "Select Model"}
+                        </option>
+                        <option value="pmsm">PMSM Gearless</option>
+                        <option value="geared">Geared Machine</option>
+                        <option value="vvvf">VVVF Door Drive</option>
+                        <option value="micro">Microprocessor Main</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 rtl:right-auto rtl:left-2 top-3 pointer-events-none" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Oversized Mechanical Orb Centerpiece (5 cols) */}
+          <div className="lg:col-span-5 relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0">
+            <div className="relative w-[340px] sm:w-[440px] md:w-[500px] lg:w-[580px] xl:w-[680px] 2xl:w-[740px] lg:-mr-16 xl:-mr-24 rtl:lg:-mr-0 rtl:lg:-ml-16 rtl:xl:-ml-24 pointer-events-none select-none transition-transform duration-700 hover:scale-[1.02]">
+              <Image
+                id="hero-mechanical-orb"
+                src="/images/hero/jupiter-mechanical-orb.webp"
+                alt="Jupiter Elevators Mechanical Engineering Orb"
+                width={900}
+                height={900}
+                priority
+                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 740px"
+                className="w-full h-auto object-contain filter drop-shadow-[0_25px_50px_rgba(11,27,61,0.20)]"
+              />
+            </div>
+          </div>
         </div>
       </div>
-
     </section>
   );
 }

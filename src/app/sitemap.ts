@@ -1,44 +1,96 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
+import { getAllParts } from "@/lib/catalog";
+import { locales } from "@/lib/i18n";
+
+const BASE_URL = "https://www.jupiterelevators.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://www.jupiterelevators.com";
+  const parts = getAllParts();
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
+  const routes: MetadataRoute.Sitemap = [];
+
+  // Localized Core Pages
+  locales.forEach((lang) => {
+    // Home
+    routes.push({
+      url: `${BASE_URL}/${lang}`,
+      changeFrequency: "daily",
       priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/catalog`,
-      lastModified: new Date(),
+    });
+
+    // About
+    routes.push({
+      url: `${BASE_URL}/${lang}/about`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    });
+
+    // Services
+    routes.push({
+      url: `${BASE_URL}/${lang}/services`,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    });
+
+    // Catalog Directory
+    routes.push({
+      url: `${BASE_URL}/${lang}/catalog`,
+      changeFrequency: "daily",
+      priority: 0.95,
+    });
+
+    // Brands Directory
+    routes.push({
+      url: `${BASE_URL}/${lang}/brands`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    });
+
+    // Contact
+    routes.push({
+      url: `${BASE_URL}/${lang}/contact`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    });
+
+    // RFQ
+    routes.push({
+      url: `${BASE_URL}/${lang}/rfq`,
       changeFrequency: "daily",
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/quote`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-  ];
+    });
+
+    // FAQ
+    routes.push({
+      url: `${BASE_URL}/${lang}/faq`,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    });
+
+    // Terms & Conditions
+    routes.push({
+      url: `${BASE_URL}/${lang}/terms`,
+      changeFrequency: "yearly",
+      priority: 0.5,
+    });
+
+    // Privacy Policy
+    routes.push({
+      url: `${BASE_URL}/${lang}/privacy`,
+      changeFrequency: "yearly",
+      priority: 0.5,
+    });
+
+    // Dynamic Part Detail Pages
+    parts.forEach((part) => {
+      routes.push({
+        url: `${BASE_URL}/${lang}/catalog/${part.slug}`,
+        changeFrequency: "weekly",
+        priority: 0.85,
+      });
+    });
+  });
+
+  return routes;
 }
+

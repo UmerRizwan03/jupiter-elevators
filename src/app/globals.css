@@ -2,117 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --brand-navy: #0B1B3D;
-    --brand-gold: #C59341;
-  }
+:root {
+  --background: #f6f7f9;
+  --foreground: #0b1b3d;
+}
 
-  html {
-    scroll-behavior: smooth;
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes hero-word-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 110%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-word-reveal {
+  animation: hero-word-reveal 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-word-reveal-2 {
+  animation-delay: 140ms;
+}
+
+.hero-word-reveal-3 {
+  animation-delay: 280ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-word-reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print optimizations for RFQ quotation summary */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
   }
 
   body {
-    @apply bg-[#FAFAFA] text-slate-900 antialiased selection:bg-brand-gold selection:text-white;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .print-only {
+    display: block !important;
   }
 }
-
-/* Minimalist Light Architectural Blueprint Utilities */
-.bg-blueprint-grid {
-  background-image: 
-    linear-gradient(to right, rgba(11, 27, 61, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(11, 27, 61, 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-.bg-blueprint-grid-dense {
-  background-image: 
-    linear-gradient(to right, rgba(11, 27, 61, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(11, 27, 61, 0.03) 1px, transparent 1px);
-  background-size: 16px 16px;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, #B8860B 0%, #C59341 50%, #8B6508 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-navy {
-  background: linear-gradient(135deg, #071228 0%, #0B1B3D 60%, #1E293B 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Architectural CAD Corner Markers */
-.cad-corner-tl {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  width: 10px;
-  height: 10px;
-  border-top: 1.5px solid rgba(197, 147, 65, 0.7);
-  border-left: 1.5px solid rgba(197, 147, 65, 0.7);
-  pointer-events: none;
-}
-
-.cad-corner-tr {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 10px;
-  height: 10px;
-  border-top: 1.5px solid rgba(197, 147, 65, 0.7);
-  border-right: 1.5px solid rgba(197, 147, 65, 0.7);
-  pointer-events: none;
-}
-
-.cad-corner-bl {
-  position: absolute;
-  bottom: 6px;
-  left: 6px;
-  width: 10px;
-  height: 10px;
-  border-bottom: 1.5px solid rgba(197, 147, 65, 0.7);
-  border-left: 1.5px solid rgba(197, 147, 65, 0.7);
-  pointer-events: none;
-}
-
-.cad-corner-br {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 10px;
-  height: 10px;
-  border-bottom: 1.5px solid rgba(197, 147, 65, 0.7);
-  border-right: 1.5px solid rgba(197, 147, 65, 0.7);
-  pointer-events: none;
-}
-
-/* Custom Minimalist Scrollbar */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-::-webkit-scrollbar-track {
-  background: #F1F5F9;
-}
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #C59341;
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 25s linear infinite;
-}
-

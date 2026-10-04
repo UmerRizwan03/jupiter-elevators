@@ -1,6 +1,4 @@
-export type SupportedLocale = "en" | "ar";
-
-export interface BilingualText {
+export interface LocalizedString {
   en: string;
   ar: string;
 }
@@ -8,11 +6,11 @@ export interface BilingualText {
 export interface ElevatorCategory {
   id: string;
   slug: string;
-  name: BilingualText;
-  description: BilingualText;
-  icon: string;
-  subcategories: BilingualText[];
-  itemCount?: number;
+  name: LocalizedString;
+  description: LocalizedString;
+  iconName: string;
+  subcategories: LocalizedString[];
+  popular?: boolean;
 }
 
 export interface ElevatorPart {
@@ -20,36 +18,20 @@ export interface ElevatorPart {
   sku: string;
   slug: string;
   categoryId: string;
-  subcategory: BilingualText;
-  name: BilingualText;
-  description: BilingualText;
+  subcategory: LocalizedString;
+  name: LocalizedString;
+  description: LocalizedString;
   specifications: Record<string, string>;
   compatibleBrands: string[];
-  inStock: boolean;
+  inStock: boolean; // Ready in Saudi Arabia
   origin: "China" | "India" | "International";
+  images: string[];
+  datasheetUrl?: string;
   featured?: boolean;
-  image: string;
-  applications?: BilingualText[];
 }
 
-export interface RFQItem {
-  partId: string;
-  sku: string;
-  name: BilingualText;
-  categoryName: BilingualText;
+export interface RfqCartItem {
+  part: ElevatorPart;
   quantity: number;
-  image: string;
   notes?: string;
-}
-
-export interface RFQSubmission {
-  companyName: string;
-  contactPerson: string;
-  phone: string;
-  email: string;
-  city: string;
-  crNumber?: string;
-  projectRef?: string;
-  notes?: string;
-  items: RFQItem[];
 }
