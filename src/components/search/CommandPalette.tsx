@@ -103,13 +103,16 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-24 px-4 p-4 animate-in fade-in duration-150">
+    <div
+      className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-24 px-4 p-4 animate-in fade-in duration-150"
+      onClick={() => setIsOpen(false)}
+    >
       <div
         className="w-full max-w-2xl bg-white rounded-2xl border border-slate-200/90 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 gap-3">
+        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 gap-2 sm:gap-3">
           <Search className="w-5 h-5 text-[#C59341] shrink-0" />
           <input
             ref={inputRef}
@@ -129,15 +132,30 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
           />
           {query && (
             <button
+              type="button"
               onClick={() => setQuery("")}
-              className="p-1 rounded text-slate-400 hover:text-slate-600"
+              className="p-1 rounded text-slate-400 hover:text-slate-600 transition-colors"
+              title={isRtl ? "مسح النص" : "Clear query"}
+              aria-label={isRtl ? "مسح النص" : "Clear query"}
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          <span className="hidden sm:inline-flex text-[10px] font-mono text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
-            ESC
-          </span>
+
+          {/* Close Spotlight Search Button (Mobile & Desktop) */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 transition-colors text-xs font-mono font-medium shrink-0 cursor-pointer shadow-2xs"
+            aria-label={isRtl ? "إغلاق البحث" : "Close search"}
+            title={isRtl ? "إغلاق (Esc)" : "Close (Esc)"}
+          >
+            <X className="w-3.5 h-3.5 text-slate-600" />
+            <span className="text-[11px] font-semibold">{isRtl ? "إغلاق" : "Close"}</span>
+            <span className="hidden sm:inline-block text-[9px] text-slate-400 bg-white border border-slate-200 px-1 py-0.2 rounded font-mono">
+              ESC
+            </span>
+          </button>
         </div>
 
         {/* Results List */}

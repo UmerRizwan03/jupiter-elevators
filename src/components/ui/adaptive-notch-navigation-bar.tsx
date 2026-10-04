@@ -527,7 +527,7 @@ export function NotchNav({
           {/* Unified Horizontal Bar */}
           <div
             className={cn(
-              "w-auto xl:w-max lg:w-full flex h-10 sm:h-10 items-center justify-between gap-3 sm:gap-5",
+              "w-auto xl:w-max lg:w-full flex h-10 sm:h-10 items-center justify-between gap-1.5 sm:gap-4 max-w-full",
               isBottom ? "sm:items-baseline md:items-end" : "sm:items-baseline md:items-start"
             )}
           >
@@ -543,23 +543,23 @@ export function NotchNav({
               aria-haspopup="listbox"
               aria-label="Toggle navigation menu"
               onClick={handleToggleDropdown}
-              className="group flex h-8 sm:h-8.5 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full px-2.5 py-2.5 sm:p-2.5 text-xs sm:text-sm font-semibold text-zinc-50 outline-none transition-colors sm:hover:bg-zinc-850/60 focus-visible:ring-2 focus-visible:ring-zinc-400 dark:text-zinc-950 dark:sm:hover:bg-zinc-300/60 dark:focus-visible:ring-zinc-500"
+              className="group flex h-8 sm:h-8.5 w-auto shrink min-w-0 cursor-pointer items-center justify-center gap-1 sm:gap-1.5 rounded-full px-2 py-1 sm:p-2.5 text-xs sm:text-sm font-semibold text-zinc-50 outline-none transition-colors sm:hover:bg-zinc-850/60 focus-visible:ring-2 focus-visible:ring-zinc-400 dark:text-zinc-950 dark:sm:hover:bg-zinc-300/60 dark:focus-visible:ring-zinc-500"
             >
               {activeItem?.icon && (
                 <activeItem.icon className="size-3.5 sm:size-4 shrink-0 text-zinc-400 dark:text-zinc-600" />
               )}
-              <span className="leading-none">{activeItem?.label}</span>
+              <span className="leading-none truncate">{activeItem?.label}</span>
               {isBottom ? (
                 <ChevronUp
                   className={cn(
-                    "size-3.5 text-zinc-400 transition-transform duration-200 dark:text-zinc-600",
+                    "size-3.5 text-zinc-400 transition-transform duration-200 dark:text-zinc-600 shrink-0",
                     isDropdownOpen && "rotate-180"
                   )}
                 />
               ) : (
                 <ChevronDown
                   className={cn(
-                    "size-3.5 text-zinc-400 transition-transform duration-200 dark:text-zinc-600",
+                    "size-3.5 text-zinc-400 transition-transform duration-200 dark:text-zinc-600 shrink-0",
                     isDropdownOpen && "rotate-180"
                   )}
                 />
@@ -567,7 +567,7 @@ export function NotchNav({
             </button>
 
             {showRightContent && rightContent && (
-              <div className="flex shrink-0 items-center justify-end text-zinc-50 dark:text-zinc-950 w-max">
+              <div className="flex shrink-0 items-center justify-end text-zinc-50 dark:text-zinc-950">
                 {rightContent}
               </div>
             )}

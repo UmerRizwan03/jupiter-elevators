@@ -24,11 +24,14 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
   return (
     <Link
       href={targetPath}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-brand-navy hover:text-brand-amber bg-white border border-brand-border hover:border-brand-amber transition-colors shadow-sm"
+      className="inline-flex items-center justify-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold text-slate-200 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-all shrink-0"
       title={currentLang === "ar" ? "Switch to English" : "التبديل إلى العربية"}
+      aria-label={currentLang === "ar" ? "Switch to English" : "التبديل إلى العربية"}
     >
-      <Globe className="w-3.5 h-3.5 text-brand-amber" />
-      <span>{currentLang === "ar" ? "English" : "العربية"}</span>
+      <Globe className="w-3 h-3 text-[#C59341] shrink-0" />
+      <span className="font-mono uppercase text-[10px] sm:text-[11px] leading-none">
+        {currentLang === "ar" ? "EN" : "عربي"}
+      </span>
     </Link>
   );
 }

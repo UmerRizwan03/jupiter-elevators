@@ -52,22 +52,23 @@ export function Header({ lang }: HeaderProps) {
   };
 
   const LogoSlot = (
-    <Link href={`/${lang}`} aria-label={isRtl ? "الصفحة الرئيسية" : "Jupiter Elevators home"} className="flex items-center h-8 cursor-pointer">
-      <JupiterLogo variant="light" className="h-5 md:h-6 w-auto" />
+    <Link href={`/${lang}`} aria-label={isRtl ? "الصفحة الرئيسية" : "Jupiter Elevators home"} className="flex items-center h-8 cursor-pointer shrink-0">
+      <JupiterLogo variant="light" className="h-5 md:h-6 w-auto shrink-0" />
     </Link>
   );
 
   const RightContentSlot = (
-    <div className="flex items-center gap-2 sm:gap-3 h-8.5">
+    <div className="flex items-center gap-1.5 sm:gap-2.5 h-8.5 shrink-0">
       {/* Quick Search Button */}
       <button
         type="button"
         onClick={() => openCommandPalette()}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors text-xs font-mono"
+        className="flex items-center justify-center h-7 px-2 sm:px-2.5 sm:py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors text-xs font-mono shrink-0"
         title={isRtl ? "بحث عن قطعة (Cmd+K)" : "Search parts (Cmd+K)"}
+        aria-label={isRtl ? "بحث عن قطعة" : "Search parts"}
       >
         <Search className="w-3.5 h-3.5 text-[#C59341]" />
-        <span className="hidden md:inline text-[10px] opacity-75">⌘K</span>
+        <span className="hidden md:inline text-[10px] opacity-75 ms-1">⌘K</span>
       </button>
 
       <LanguageSwitcher currentLang={lang} />
@@ -76,7 +77,7 @@ export function Header({ lang }: HeaderProps) {
       {totalItemsCount > 0 && (
         <Link
           href={`/${lang}/rfq`}
-          className="relative p-1 text-slate-300 hover:text-white transition-colors"
+          className="relative p-1 text-slate-300 hover:text-white transition-colors shrink-0"
           title="RFQ Basket"
         >
           <FileText className="w-4 h-4 text-amber-500" />
@@ -89,7 +90,7 @@ export function Header({ lang }: HeaderProps) {
       {/* "Get a Quote →" Action Button */}
       <Link
         href={`/${lang}/rfq`}
-        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-zinc-950 hover:bg-slate-200 text-xs font-bold transition-all shadow-sm group"
+        className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-zinc-950 hover:bg-slate-200 text-xs font-bold transition-all shadow-sm group shrink-0"
       >
         <span>{isRtl ? "طلب تسعير" : "Quote"}</span>
         <ArrowRight className="w-3 h-3 rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
