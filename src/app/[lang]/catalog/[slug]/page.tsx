@@ -204,7 +204,7 @@ export default async function PartDetailPage({
                     <span className="relative h-16 w-16 shrink-0 overflow-hidden bg-[#F1F3F5]">
                       <Image
                         src={getPartImageUrl(related)}
-                        alt=""
+                        alt={related.name[validLocale]}
                         fill
                         sizes="64px"
                         className="object-contain p-2"

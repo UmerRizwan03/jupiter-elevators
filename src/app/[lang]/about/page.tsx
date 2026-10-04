@@ -550,11 +550,11 @@ export default async function AboutPage({
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#C59341]" />
-                <span dir="ltr">+966 50 123 4567</span>
+                <a href="tel:+966562614370" dir="ltr" className="hover:text-[#C59341] transition-colors">+966 562614370</a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#C59341]" />
-                <span>info@jupiterelevators.com</span>
+                <a href="mailto:elevatorsjupiter@gmail.com" className="hover:text-[#C59341] transition-colors">elevatorsjupiter@gmail.com</a>
               </div>
             </div>
 

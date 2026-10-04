@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RFQ_FROM_EMAIL;
-  const to = process.env.RFQ_TO_EMAIL || "sales@jupiterelevators.com";
+  const to = process.env.RFQ_TO_EMAIL || "elevatorsjupiter@gmail.com";
   if (!apiKey || !from) {
     return NextResponse.json({ error: "Email delivery is not configured." }, { status: 503 });
   }

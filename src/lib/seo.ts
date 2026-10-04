@@ -25,7 +25,11 @@ export function getLocalBusinessJsonLd(locale: "ar" | "en") {
     url: "https://www.jupiterelevators.com",
     logo: "https://www.jupiterelevators.com/images/logo.svg",
     telephone: "+966562614370",
-    email: "sales@jupiterelevators.com",
+    email: "elevatorsjupiter@gmail.com",
+    sameAs: [
+      "https://www.instagram.com/jupiterelevators?stkn=dGh2eTBvNmxwNnps",
+      "https://www.facebook.com/share/1Q6pwuLyj8/",
+    ],
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",

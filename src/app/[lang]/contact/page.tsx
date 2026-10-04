@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, MessageCircle, Phone, Instagram, Facebook } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { defaultLocale, getDictionary, isValidLocale, type Locale } from "@/lib/i18n";
 import { getLocalizedAlternates } from "@/lib/seo";
@@ -106,6 +106,32 @@ export default async function ContactPage({
                     </span>
                   </p>
                 </div>
+              </div>
+            </section>
+
+            <section className="border-t border-slate-200 pt-6">
+              <h2 className="mb-3 text-sm font-semibold text-slate-950">
+                {isRtl ? "تابعنا على منصات التواصل" : "Follow Our Channels"}
+              </h2>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://www.instagram.com/jupiterelevators?stkn=dGh2eTBvNmxwNnps"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors"
+                >
+                  <Instagram className="h-4 w-4 text-[#C59341]" aria-hidden="true" />
+                  <span>Instagram</span>
+                </a>
+                <a
+                  href="https://www.facebook.com/share/1Q6pwuLyj8/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors"
+                >
+                  <Facebook className="h-4 w-4 text-[#C59341]" aria-hidden="true" />
+                  <span>Facebook</span>
+                </a>
               </div>
             </section>
 

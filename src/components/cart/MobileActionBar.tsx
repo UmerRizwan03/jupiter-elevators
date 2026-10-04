@@ -71,7 +71,10 @@ export function MobileActionBar({ lang }: MobileActionBarProps) {
           <div className="relative">
             <FileText className="w-4.5 h-4.5 text-[#C59341]" />
             {totalItemsCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 rtl:-right-auto rtl:-left-2 bg-[#C59341] text-white text-[9px] font-mono font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
+              <span
+                className="absolute -top-1.5 -right-2 rtl:-right-auto rtl:-left-2 bg-[#C59341] text-white text-[9px] font-mono font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center"
+                aria-live="polite"
+              >
                 {totalItemsCount}
               </span>
             )}

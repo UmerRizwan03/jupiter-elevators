@@ -29,7 +29,10 @@ export function FloatingCartButton({ lang }: FloatingCartButtonProps) {
         >
           <div className="relative">
             <FileText className="w-5 h-5 text-[#C59341]" />
-            <span className="absolute -top-2 -right-2 rtl:-right-auto rtl:-left-2 bg-[#C59341] text-white text-[10px] font-mono font-bold rounded-full w-4.5 h-4.5 flex items-center justify-center shadow-xs">
+            <span
+              className="absolute -top-2 -right-2 rtl:-right-auto rtl:-left-2 bg-[#C59341] text-white text-[10px] font-mono font-bold rounded-full w-4.5 h-4.5 flex items-center justify-center shadow-xs"
+              aria-live="polite"
+            >
               {totalItemsCount}
             </span>
           </div>

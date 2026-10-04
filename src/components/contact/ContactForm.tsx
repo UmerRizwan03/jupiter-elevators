@@ -17,21 +17,29 @@ export function ContactForm({ lang }: ContactFormProps) {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; message?: string }>({});
   const [deliveryStatus, setDeliveryStatus] = useState<"sent" | "fallback" | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const website = new FormData(e.currentTarget).get("website");
 
-    if (!name.trim() || !phone.trim() || !message.trim()) {
-      alert(
-        isRtl
-          ? "يرجى تعبئة الاسم، رقم الجوال، والرسالة."
-          : "Please enter your name, phone number, and message."
-      );
+    const newErrors: { name?: string; phone?: string; message?: string } = {};
+    if (!name.trim()) {
+      newErrors.name = isRtl ? "يرجى كتابة الاسم الكريم" : "Name is required";
+    }
+    if (!phone.trim()) {
+      newErrors.phone = isRtl ? "يرجى إدخال رقم الجوال للتواصل" : "Phone number is required";
+    }
+    if (!message.trim()) {
+      newErrors.message = isRtl ? "يرجى كتابة نص الرسالة أو الاستفسار" : "Message cannot be empty";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+    setErrors({});
 
     const formattedMessage = isRtl
       ? `*رسالة جديدة عبر الموقع - جوبيتر للمصاعد*\n• الاسم: ${name}\n• الشركة: ${company || "غير محدد"}\n• الجوال: ${phone}\n• الموضوع: ${subject || "استفسار عام"}\n• الرسالة: ${message}`
@@ -99,12 +107,16 @@ export function ContactForm({ lang }: ContactFormProps) {
           <input
             type="text"
             id="contact-name"
-            required
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+            }}
             placeholder={isRtl ? "م. أحمد الغامدي" : "Eng. Ahmed Al-Ghamdi"}
-            className="w-full h-11 px-3.5 rounded-md border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-colors placeholder:text-slate-400"
+            className={`w-full h-11 px-3.5 rounded-md border ${errors.name ? "border-red-500 ring-1 ring-red-500" : "border-slate-300 focus:border-[#C59341] focus:ring-[#C59341]"} text-sm bg-white focus:outline-none focus:ring-1 text-slate-900 transition-colors placeholder:text-slate-400`}
+            aria-invalid={!!errors.name}
           />
+          {errors.name && <p className="mt-1 text-xs text-red-600 font-medium">{errors.name}</p>}
         </div>
 
         <div>
@@ -130,13 +142,17 @@ export function ContactForm({ lang }: ContactFormProps) {
           <input
             type="tel"
             id="contact-phone"
-            required
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+            }}
             placeholder="05xxxxxxxx"
-            className="w-full h-11 px-3.5 rounded-md border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 font-mono transition-colors placeholder:text-slate-400"
+            className={`w-full h-11 px-3.5 rounded-md border ${errors.phone ? "border-red-500 ring-1 ring-red-500" : "border-slate-300 focus:border-[#C59341] focus:ring-[#C59341]"} text-sm bg-white focus:outline-none focus:ring-1 text-slate-900 font-mono transition-colors placeholder:text-slate-400`}
             dir="ltr"
+            aria-invalid={!!errors.phone}
           />
+          {errors.phone && <p className="mt-1 text-xs text-red-600 font-medium">{errors.phone}</p>}
         </div>
 
         <div>
@@ -161,16 +177,20 @@ export function ContactForm({ lang }: ContactFormProps) {
         <textarea
           rows={3}
           id="contact-message"
-          required
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
+          }}
           placeholder={
             isRtl
               ? "اكتب تفاصيل طلبك، رقم القطعة، أو أي مواصفات فنية مطلوبة..."
               : "Detail your inquiry, part numbers, or specific technical requirements..."
           }
-          className="w-full p-3 rounded-md border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-colors placeholder:text-slate-400"
+          className={`w-full p-3 rounded-md border ${errors.message ? "border-red-500 ring-1 ring-red-500" : "border-slate-300 focus:border-[#C59341] focus:ring-[#C59341]"} text-sm bg-white focus:outline-none focus:ring-1 text-slate-900 transition-colors placeholder:text-slate-400`}
+          aria-invalid={!!errors.message}
         />
+        {errors.message && <p className="mt-1 text-xs text-red-600 font-medium">{errors.message}</p>}
       </div>
 
       <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">

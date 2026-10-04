@@ -50,11 +50,11 @@ export default async function OpenGraphImage({
             }}
           >
             {isArabic
-              ? "Authorized Elevator Parts & Components"
+              ? "قطع ومكونات المصاعد المعتمدة في المملكة"
               : "Elevator Parts. Ready for the Next Move."}
           </div>
           <div style={{ color: "#D8B36A", fontSize: 24, letterSpacing: 2 }}>
-            DAMMAM · SAUDI ARABIA
+            {isArabic ? "الدمام · المملكة العربية السعودية" : "DAMMAM · SAUDI ARABIA"}
           </div>
         </div>
         <div style={{ height: 2, width: "100%", background: "#C59341" }} />

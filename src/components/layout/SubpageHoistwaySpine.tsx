@@ -49,46 +49,73 @@ export function SubpageHoistwaySpine({ lang }: SubpageHoistwaySpineProps) {
 
     let targetScrollY = window.scrollY;
     let currentScrollY = window.scrollY;
-    let animId: number;
+    let animId: number | null = null;
+    let isTicking = false;
+
+    const renderFrame = () => {
+      // Primary drive sheave rotates clockwise with scroll down
+      const topAngle = (currentScrollY * 0.16) % 360;
+      // Counterweight/deflector idler sheave rotates counter-clockwise
+      const bottomAngle = (-currentScrollY * 0.26) % 360;
+
+      if (topSheaveRef.current) {
+        topSheaveRef.current.style.transform = `rotate(${topAngle}deg)`;
+      }
+      if (bottomSheaveRef.current) {
+        bottomSheaveRef.current.style.transform = `rotate(${bottomAngle}deg)`;
+      }
+
+      // Cable braided pattern offset traveling with scroll
+      if (cablesPatternRef.current) {
+        const cableOffset = (currentScrollY * 0.45) % 28;
+        cablesPatternRef.current.setAttribute("y", `${cableOffset}`);
+      }
+    };
+
+    const tick = () => {
+      if (prefersReducedMotion) {
+        isTicking = false;
+        animId = null;
+        return;
+      }
+
+      // Smooth lerp damping for mechanical inertia
+      const diff = targetScrollY - currentScrollY;
+      if (Math.abs(diff) > 0.05) {
+        currentScrollY += diff * 0.12;
+        renderFrame();
+        animId = requestAnimationFrame(tick);
+      } else {
+        // Snap to target and sleep until next scroll event
+        currentScrollY = targetScrollY;
+        renderFrame();
+        isTicking = false;
+        animId = null;
+      }
+    };
+
+    const startTicking = () => {
+      if (!isTicking && !prefersReducedMotion) {
+        isTicking = true;
+        animId = requestAnimationFrame(tick);
+      }
+    };
 
     const handleScroll = () => {
       targetScrollY = window.scrollY;
+      startTicking();
     };
+
+    // Initial paint
+    renderFrame();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    const tick = () => {
-      if (!prefersReducedMotion) {
-        // Smooth lerp damping for mechanical inertia
-        currentScrollY += (targetScrollY - currentScrollY) * 0.12;
-
-        // Primary drive sheave rotates clockwise with scroll down
-        const topAngle = (currentScrollY * 0.16) % 360;
-        // Counterweight/deflector idler sheave rotates counter-clockwise
-        const bottomAngle = (-currentScrollY * 0.26) % 360;
-
-        if (topSheaveRef.current) {
-          topSheaveRef.current.style.transform = `rotate(${topAngle}deg)`;
-        }
-        if (bottomSheaveRef.current) {
-          bottomSheaveRef.current.style.transform = `rotate(${bottomAngle}deg)`;
-        }
-
-        // Cable braided pattern offset traveling with scroll
-        if (cablesPatternRef.current) {
-          const cableOffset = (currentScrollY * 0.45) % 28;
-          cablesPatternRef.current.setAttribute("y", `${cableOffset}`);
-        }
-      }
-
-      animId = requestAnimationFrame(tick);
-    };
-
-    animId = requestAnimationFrame(tick);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(animId);
+      if (animId !== null) {
+        cancelAnimationFrame(animId);
+      }
     };
   }, [isHome]);
 

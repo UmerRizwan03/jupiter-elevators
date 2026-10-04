@@ -43,7 +43,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
 
       {/* Floating Toast Container */}
-      <div className="fixed top-6 right-6 rtl:right-auto rtl:left-6 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+      <div
+        className="fixed top-6 right-6 rtl:right-auto rtl:left-6 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {toasts.map((t) => (
           <div
             key={t.id}

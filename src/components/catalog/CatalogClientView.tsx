@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search,
@@ -50,6 +50,16 @@ export function CatalogClientView({
   const [currentPage, setCurrentPage] = useState(1);
   const [recommendationIndex, setRecommendationIndex] = useState(0);
 
+  const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+      }
+    };
+  }, []);
+
   // Sync state with URL params
   const updateUrlParams = (
     newQuery: string,
@@ -71,30 +81,40 @@ export function CatalogClientView({
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
-    updateUrlParams(val, selectedCategory, selectedBrand, inStockOnly, selectedModel);
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+    searchDebounceRef.current = setTimeout(() => {
+      updateUrlParams(val, selectedCategory, selectedBrand, inStockOnly, selectedModel);
+    }, 250);
   };
 
   const handleCategoryChange = (catId: string) => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setSelectedCategory(catId);
     updateUrlParams(query, catId, selectedBrand, inStockOnly, selectedModel);
   };
 
   const handleBrandChange = (brand: string) => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setSelectedBrand(brand);
     updateUrlParams(query, selectedCategory, brand, inStockOnly, selectedModel);
   };
 
   const handleInStockToggle = (val: boolean) => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setInStockOnly(val);
     updateUrlParams(query, selectedCategory, selectedBrand, val, selectedModel);
   };
 
   const handleModelChange = (model: string) => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setSelectedModel(model);
     updateUrlParams(query, selectedCategory, selectedBrand, inStockOnly, model);
   };
 
   const clearAllFilters = () => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setQuery("");
     setSelectedCategory("all");
     setSelectedBrand("all");

@@ -5,6 +5,8 @@ import {
   MapPin,
   Mail,
   Phone,
+  Instagram,
+  Facebook,
 } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
 import { JupiterLogo } from "@/components/common/JupiterLogo";
@@ -50,6 +52,29 @@ export function Footer({ lang }: FooterProps) {
 
             <div className="pt-2 text-[11px] text-slate-500 font-mono">
               <span>CR: 2050078848 | VAT: 311250980100003</span>
+            </div>
+
+            <div className="pt-2 flex items-center gap-2.5">
+              <a
+                href="https://www.instagram.com/jupiterelevators?stkn=dGh2eTBvNmxwNnps"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-[#C59341] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                aria-label="Jupiter Elevators Instagram"
+                title="Instagram: @jupiterelevators"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/share/1Q6pwuLyj8/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-[#C59341] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                aria-label="Jupiter Elevators Facebook"
+                title="Facebook: Jupiter Elevators"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
@@ -171,8 +196,8 @@ export function Footer({ lang }: FooterProps) {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#C59341] shrink-0" />
-                <a href="mailto:info@jupiterelevators.com" className="hover:text-white transition-colors">
-                  info@jupiterelevators.com
+                <a href="mailto:elevatorsjupiter@gmail.com" className="hover:text-white transition-colors truncate">
+                  elevatorsjupiter@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-2">

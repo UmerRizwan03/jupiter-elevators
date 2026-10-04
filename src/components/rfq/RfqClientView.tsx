@@ -40,6 +40,7 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
   const [notes, setNotes] = useState("");
 
   const [submittedRef, setSubmittedRef] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ companyName?: string; contactPerson?: string; phone?: string }>({});
   const [emailDelivery, setEmailDelivery] = useState<"sent" | "fallback" | null>(null);
 
   const citiesList = [
@@ -67,14 +68,22 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
     e.preventDefault();
     const website = new FormData(e.currentTarget).get("website");
 
-    if (!companyName.trim() || !contactPerson.trim() || !phone.trim()) {
-      alert(
-        isRtl
-          ? "يرجى تعبئة اسم الشركة، اسم المسؤول، ورقم الهاتف."
-          : "Please enter Company Name, Contact Person, and Phone Number."
-      );
+    const newErrors: { companyName?: string; contactPerson?: string; phone?: string } = {};
+    if (!companyName.trim()) {
+      newErrors.companyName = isRtl ? "يرجى كتابة اسم الشركة أو المؤسسة" : "Company name is required";
+    }
+    if (!contactPerson.trim()) {
+      newErrors.contactPerson = isRtl ? "يرجى كتابة اسم المسؤول أو المهندس" : "Contact person is required";
+    }
+    if (!phone.trim()) {
+      newErrors.phone = isRtl ? "يرجى إدخال رقم الجوال" : "Phone number is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+    setErrors({});
 
     const refCode = generateReferenceCode();
 
@@ -413,12 +422,16 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
                 <input
                   type="text"
                   id="rfq-company"
-                  required
                   value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
+                  onChange={(e) => {
+                    setCompanyName(e.target.value);
+                    if (errors.companyName) setErrors((prev) => ({ ...prev, companyName: undefined }));
+                  }}
                   placeholder={dict.rfq.companyNamePlaceholder}
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-slate-50/90 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-all placeholder:text-slate-400"
+                  className={`w-full h-11 px-3.5 rounded-xl border ${errors.companyName ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 focus:border-[#C59341] focus:ring-[#C59341]"} text-xs sm:text-sm bg-slate-50/90 focus:bg-white focus:outline-none focus:ring-1 text-slate-900 transition-all placeholder:text-slate-400`}
+                  aria-invalid={!!errors.companyName}
                 />
+                {errors.companyName && <p className="mt-1 text-xs text-red-600 font-medium">{errors.companyName}</p>}
               </div>
 
               {/* Contact Person */}
@@ -429,12 +442,16 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
                 <input
                   type="text"
                   id="rfq-contact"
-                  required
                   value={contactPerson}
-                  onChange={(e) => setContactPerson(e.target.value)}
+                  onChange={(e) => {
+                    setContactPerson(e.target.value);
+                    if (errors.contactPerson) setErrors((prev) => ({ ...prev, contactPerson: undefined }));
+                  }}
                   placeholder={dict.rfq.contactPersonPlaceholder}
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-slate-50/90 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-all placeholder:text-slate-400"
+                  className={`w-full h-11 px-3.5 rounded-xl border ${errors.contactPerson ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 focus:border-[#C59341] focus:ring-[#C59341]"} text-xs sm:text-sm bg-slate-50/90 focus:bg-white focus:outline-none focus:ring-1 text-slate-900 transition-all placeholder:text-slate-400`}
+                  aria-invalid={!!errors.contactPerson}
                 />
+                {errors.contactPerson && <p className="mt-1 text-xs text-red-600 font-medium">{errors.contactPerson}</p>}
               </div>
 
               {/* Phone & City Row */}
@@ -446,13 +463,17 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
                   <input
                     type="tel"
                     id="rfq-phone"
-                    required
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+                    }}
                     placeholder={dict.rfq.phonePlaceholder}
-                    className="w-full h-11 px-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-slate-50/90 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 font-mono transition-all placeholder:text-slate-400"
+                    className={`w-full h-11 px-3.5 rounded-xl border ${errors.phone ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 focus:border-[#C59341] focus:ring-[#C59341]"} text-xs sm:text-sm bg-slate-50/90 focus:bg-white focus:outline-none focus:ring-1 text-slate-900 font-mono transition-all placeholder:text-slate-400`}
                     dir="ltr"
+                    aria-invalid={!!errors.phone}
                   />
+                  {errors.phone && <p className="mt-1 text-xs text-red-600 font-medium">{errors.phone}</p>}
                 </div>
 
                 <div>

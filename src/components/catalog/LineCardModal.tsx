@@ -171,7 +171,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
               {/* Action Buttons */}
               <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs font-mono text-slate-500">
-                  <span>DISPATCH HOTLINE: +966 562614370 | sales@jupiterelevators.com</span>
+                  <span>DISPATCH HOTLINE: +966 562614370 | elevatorsjupiter@gmail.com</span>
                 </div>
 
                 <div className="flex items-center gap-3 w-full sm:w-auto">
