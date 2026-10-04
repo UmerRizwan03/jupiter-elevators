@@ -68,11 +68,19 @@ export default async function ContactPage({
 
                 <div className="flex items-start gap-3">
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#9A702D]" aria-hidden="true" />
-                  <div>
-                    <p className="text-sm text-slate-500">{isRtl ? "البريد الإلكتروني" : "Email"}</p>
-                    <a href={`mailto:${dict.brand.email}`} className="mt-0.5 inline-block font-medium text-slate-950 underline decoration-slate-300 underline-offset-4 hover:decoration-[#9A702D]">
-                      {dict.brand.email}
-                    </a>
+                  <div className="space-y-1.5">
+                    <div>
+                      <p className="text-xs text-slate-500">{isRtl ? "مبيعات وقطع الغيار (الرئيسي)" : "Sales & Parts Desk (Primary)"}</p>
+                      <a href={`mailto:${dict.brand.salesEmail || "sales@jupiterelevators.com"}`} className="mt-0.5 inline-block font-medium text-slate-950 underline decoration-slate-300 underline-offset-4 hover:decoration-[#9A702D]">
+                        {dict.brand.salesEmail || "sales@jupiterelevators.com"}
+                      </a>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">{isRtl ? "استفسارات عامة وتجارية" : "General & Corporate Info"}</p>
+                      <a href={`mailto:${dict.brand.infoEmail || "info@jupiterelevators.com"}`} className="mt-0.5 inline-block text-xs font-medium text-slate-700 underline decoration-slate-300 underline-offset-4 hover:decoration-[#9A702D]">
+                        {dict.brand.infoEmail || "info@jupiterelevators.com"}
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

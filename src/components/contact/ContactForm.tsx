@@ -14,6 +14,7 @@ export function ContactForm({ lang }: ContactFormProps) {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
+  const [department, setDepartment] = useState<"sales" | "info" | "tech" | "executive">("sales");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -41,9 +42,22 @@ export function ContactForm({ lang }: ContactFormProps) {
     }
     setErrors({});
 
+    const departmentLabels = {
+      sales: isRtl ? "المبيعات وتوريد القطع" : "Sales & Parts Desk",
+      info: isRtl ? "استفسارات عامة ومعلومات" : "General & Corporate Info",
+      tech: isRtl ? "الدعم الفني والاستشارات" : "Technical Support & Engineering",
+      executive: isRtl ? "تصعيد للإدارة التنفيذية" : "Executive Escalation (Direct Management)",
+    };
+
+    const resolvedSubject = department === "executive"
+      ? `Executive Escalation: ${subject.trim() || "Critical Inquiry"}`
+      : department === "info"
+      ? `General Inquiry: ${subject.trim() || "Corporate Information"}`
+      : (subject.trim() || departmentLabels[department]);
+
     const formattedMessage = isRtl
-      ? `*رسالة جديدة عبر الموقع - جوبيتر للمصاعد*\n• الاسم: ${name}\n• الشركة: ${company || "غير محدد"}\n• الجوال: ${phone}\n• الموضوع: ${subject || "استفسار عام"}\n• الرسالة: ${message}`
-      : `*New Website Inquiry - Jupiter Elevators*\n• Name: ${name}\n• Company: ${company || "N/A"}\n• Phone: ${phone}\n• Subject: ${subject || "General Inquiry"}\n• Message: ${message}`;
+      ? `*رسالة جديدة عبر الموقع - جوبيتر للمصاعد*\n• القسم: ${departmentLabels[department]}\n• الاسم: ${name}\n• الشركة: ${company || "غير محدد"}\n• الجوال: ${phone}\n• الموضوع: ${resolvedSubject}\n• الرسالة: ${message}`
+      : `*New Website Inquiry - Jupiter Elevators*\n• Department: ${departmentLabels[department]}\n• Name: ${name}\n• Company: ${company || "N/A"}\n• Phone: ${phone}\n• Subject: ${resolvedSubject}\n• Message: ${message}`;
 
     const whatsappWindow = window.open("about:blank", "_blank");
     let emailSent = false;
@@ -51,7 +65,7 @@ export function ContactForm({ lang }: ContactFormProps) {
       const response = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind: "contact", locale: lang, name, company, phone, subject, message, website }),
+        body: JSON.stringify({ kind: "contact", locale: lang, name, company, phone, subject: resolvedSubject, message, website }),
       });
       emailSent = response.ok;
     } catch {
@@ -156,18 +170,46 @@ export function ContactForm({ lang }: ContactFormProps) {
         </div>
 
         <div>
-          <label htmlFor="contact-subject" className="block text-sm font-medium text-slate-800 mb-1.5">
-            {isRtl ? "الموضوع أو فئة القطعة" : "Subject / Category"}
+          <label htmlFor="contact-department" className="block text-sm font-medium text-slate-800 mb-1.5">
+            {isRtl ? "القسم المعني بالاستفسار" : "Direct To Department"}
           </label>
-          <input
-            type="text"
-            id="contact-subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder={isRtl ? "استفسار عن لوحات تحكم" : "Inquiry about Control Boards"}
-            className="w-full h-11 px-3.5 rounded-md border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-colors placeholder:text-slate-400"
-          />
+          <select
+            id="contact-department"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value as "sales" | "info" | "tech" | "executive")}
+            className="w-full h-11 px-3 rounded-md border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-colors"
+          >
+            <option value="sales">{isRtl ? "المبيعات وتوريد قطع الغيار (sales@)" : "Sales & Parts Procurement (sales@)"}</option>
+            <option value="info">{isRtl ? "استفسارات عامة ومعلومات تجارية (info@)" : "General Information & Corporate (info@)"}</option>
+            <option value="tech">{isRtl ? "الدعم الفني والاستشارات الهندسية" : "Technical Support & Engineering"}</option>
+            <option value="executive">{isRtl ? "⚡ تصعيد للإدارة التنفيذية (طوارئ ومناقصات)" : "⚡ Executive Escalation (Direct Management)"}</option>
+          </select>
         </div>
+      </div>
+
+      {department === "executive" && (
+        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs text-amber-900 flex items-start gap-2">
+          <span className="font-bold shrink-0">{isRtl ? "ملاحظة:" : "Notice:"}</span>
+          <span>
+            {isRtl
+              ? "يتم توجيه هذا الطلب بشكل مشفر ومباشر إلى إدارة الشركة وحالات الطوارئ والمناقصات الكبرى."
+              : "This inquiry routes directly to the Managing Director for critical operational emergencies, major tenders, and strategic matters."}
+          </span>
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="contact-subject" className="block text-sm font-medium text-slate-800 mb-1.5">
+          {isRtl ? "الموضوع أو فئة القطعة" : "Subject / Category"}
+        </label>
+        <input
+          type="text"
+          id="contact-subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder={isRtl ? "استفسار عن لوحات تحكم، محركات، أبواب..." : "Inquiry about Control Boards, Motors, Doors..."}
+          className="w-full h-11 px-3.5 rounded-md border border-slate-300 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#C59341] focus:border-[#C59341] text-slate-900 transition-colors placeholder:text-slate-400"
+        />
       </div>
 
       <div>

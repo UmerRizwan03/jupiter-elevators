@@ -126,16 +126,45 @@ export async function POST(request: NextRequest) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RFQ_FROM_EMAIL;
-  const to = process.env.RFQ_TO_EMAIL || "elevatorsjupiter@gmail.com";
   if (!apiKey || !from) {
     return NextResponse.json({ error: "Email delivery is not configured." }, { status: 503 });
   }
 
-  const subject = `${body.kind === "rfq" ? "RFQ" : "Website inquiry"}${body.reference ? ` ${clean(body.reference, 50)}` : ""}`;
+  const rawSubject = clean(body.subject, 200).toLowerCase();
+  const isExecutive = body.kind === "contact" && (
+    rawSubject.includes("executive") ||
+    rawSubject.includes("emergency") ||
+    rawSubject.includes("mahaboob") ||
+    clean(body.subject, 200).includes("الإدارة التنفيذية") ||
+    clean(body.subject, 200).includes("تصعيد")
+  );
+
+  const primaryRecipient = isExecutive
+    ? (process.env.RFQ_EXECUTIVE_EMAIL || "mahaboob@jupiterelevators.com")
+    : (process.env.RFQ_TO_EMAIL || "sales@jupiterelevators.com");
+
+  const ccEnv = process.env.RFQ_CC_EMAIL || "elevatorsjupiter@gmail.com";
+  const ccList: string[] = [];
+  if (ccEnv && ccEnv.toLowerCase() !== primaryRecipient.toLowerCase()) {
+    ccList.push(ccEnv);
+  }
+
+  const subject = `${body.kind === "rfq" ? "RFQ" : isExecutive ? "EXECUTIVE ESCALATION" : "Website inquiry"}${body.reference ? ` ${clean(body.reference, 50)}` : ""}`;
+  
+  const emailPayload: Record<string, unknown> = {
+    from,
+    to: [primaryRecipient],
+    subject,
+    text: lines.join("\n"),
+  };
+  if (ccList.length > 0) {
+    emailPayload.cc = ccList;
+  }
+
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [to], subject, text: lines.join("\n") }),
+    body: JSON.stringify(emailPayload),
     cache: "no-store",
     signal: AbortSignal.timeout(8_000),
   }).catch(() => null);

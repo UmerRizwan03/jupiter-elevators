@@ -194,11 +194,16 @@ export function Footer({ lang }: FooterProps) {
                     : "Dammam, KSA / Dubai, UAE"}
                 </span>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#C59341] shrink-0" />
-                <a href="mailto:elevatorsjupiter@gmail.com" className="hover:text-white transition-colors truncate">
-                  elevatorsjupiter@gmail.com
-                </a>
+              <li className="flex items-start gap-2">
+                <Mail className="w-3.5 h-3.5 text-[#C59341] shrink-0 mt-0.5" />
+                <div className="flex flex-col text-xs space-y-0.5">
+                  <a href="mailto:sales@jupiterelevators.com" className="hover:text-white transition-colors truncate">
+                    sales@jupiterelevators.com
+                  </a>
+                  <a href="mailto:info@jupiterelevators.com" className="hover:text-white transition-colors text-slate-500 text-[11px] truncate">
+                    info@jupiterelevators.com
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#C59341] shrink-0" />

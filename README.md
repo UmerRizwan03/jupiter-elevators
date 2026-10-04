@@ -28,7 +28,9 @@
 * **VAT Registration Certificate:** `311250980100003`
 * **Central Distribution Hub:** Dammam Industrial Area, Eastern Province, KSA
 * **Hotline / WhatsApp:** `+966 56 261 4370`
-* **Technical Inquiries & Quotes:** `elevatorsjupiter@gmail.com`
+* **Sales & Quotations (Primary):** `sales@jupiterelevators.com`
+* **General & Corporate:** `info@jupiterelevators.com`
+* **Operational Backup:** `elevatorsjupiter@gmail.com`
 * **Official Website:** [https://jupiterelevators.com](https://jupiterelevators.com)
 * **Social Channels:** [Instagram (@jupiterelevators)](https://www.instagram.com/jupiterelevators?stkn=dGh2eTBvNmxwNnps) · [Facebook](https://www.facebook.com/share/1Q6pwuLyj8/)
 
@@ -247,8 +249,14 @@ jupiter-elevators/
    # Email sender address (must be a verified domain in Resend)
    RFQ_FROM_EMAIL=procurement@jupiterelevators.com
 
-   # Email recipient for inbound quotes and inquiries
-   RFQ_TO_EMAIL=elevatorsjupiter@gmail.com
+   # Primary recipient for inbound sales & RFQ quotes
+   RFQ_TO_EMAIL=sales@jupiterelevators.com
+
+   # Safety CC backup inbox
+   RFQ_CC_EMAIL=elevatorsjupiter@gmail.com
+
+   # Executive escalation inbox (routed for critical tenders & emergencies)
+   RFQ_EXECUTIVE_EMAIL=mahaboob@jupiterelevators.com
 
    # Optional Google Analytics 4 Measurement ID
    NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
@@ -319,7 +327,8 @@ For immediate quotations, emergency parts dispatch, or distributorship inquiries
 * **Location:** Dammam Industrial Area, Eastern Province, Kingdom of Saudi Arabia
 * **Phone / Hotline:** `+966 56 261 4370`
 * **Direct WhatsApp:** [Chat with a Sales Engineer](https://wa.me/966562614370)
-* **General & Tender Inquiries:** `elevatorsjupiter@gmail.com`
+* **Sales & Quotations:** `sales@jupiterelevators.com`
+* **General & Corporate:** `info@jupiterelevators.com`
 * **Official Website:** [https://jupiterelevators.com](https://jupiterelevators.com)
 
 ---
