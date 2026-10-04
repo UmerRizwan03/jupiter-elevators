@@ -48,3 +48,8 @@ Thumbs.db
 /brandmark_icon_192.png
 /favicon_64.png
 /favicon_32.png
+
+# Local dev, design inspiration & AI tooling
+AGENTS.md
+CLAUDE.md
+docs/
