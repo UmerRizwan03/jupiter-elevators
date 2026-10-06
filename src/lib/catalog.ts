@@ -1,6 +1,22 @@
 import { categories } from "@/data/categories";
 import { parts } from "@/data/parts";
-import type { ElevatorCategory, ElevatorPart } from "@/types/catalog";
+import type { ElevatorCategory, ElevatorPart, PartVariant } from "@/types/catalog";
+
+export const FIREBASE_STORAGE_BUCKET = "bewegen-elevators-ascent.firebasestorage.app";
+
+/**
+ * Converts a Firebase Storage path (e.g. 'products/control-system/NICE 3000 NEW INVERTER.png')
+ * into a publicly accessible Google Firebase Storage media URL.
+ */
+export function getStorageImageUrl(storagePath?: string): string | null {
+  if (!storagePath || typeof storagePath !== "string") return null;
+  const trimmed = storagePath.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/")) {
+    return trimmed;
+  }
+  return `https://firebasestorage.googleapis.com/v0/b/${FIREBASE_STORAGE_BUCKET}/o/${encodeURIComponent(trimmed)}?alt=media`;
+}
 
 export function getAllCategories(): ElevatorCategory[] {
   return categories;
@@ -84,12 +100,40 @@ export function filterParts(options: FilterOptions): ElevatorPart[] {
   });
 }
 
-export function getPartImageUrl(part: ElevatorPart): string {
-  if (part.images?.[0]) return part.images[0];
+/**
+ * Returns the primary display image URL for an ElevatorPart.
+ * Priority:
+ * 1. Variant-specific image (if variant is selected)
+ * 2. Explicit custom part image (if not a generic placeholder)
+ * 3. First available variant photo from Firebase Storage
+ * 4. Localized popular/component assets
+ */
+export function getPartImageUrl(part: ElevatorPart, selectedVariant?: PartVariant): string {
+  // 1. If variant is provided with storagePath or image
+  if (selectedVariant?.storagePath) {
+    const url = getStorageImageUrl(selectedVariant.storagePath);
+    if (url) return url;
+  }
+  if (selectedVariant?.image) {
+    return selectedVariant.image;
+  }
 
+  // 2. Custom non-placeholder part images (e.g. custom product uploads)
+  if (part.images?.[0] && !part.images[0].startsWith("/images/components/")) {
+    return part.images[0];
+  }
+
+  // 3. Check if any variant has a real factory photo in Firebase Storage
+  if (part.variants && part.variants.length > 0) {
+    const vWithPhoto = part.variants.find((v) => v.storagePath);
+    if (vWithPhoto?.storagePath) {
+      const url = getStorageImageUrl(vWithPhoto.storagePath);
+      if (url) return url;
+    }
+  }
+
+  // 4. Specific slug mappings
   const s = part.slug.toLowerCase();
-
-  // Part-specific exact mappings
   if (s.includes("kone") || s.includes("kdl16l") || s.includes("inverter")) {
     return "/images/popular/kone-kdl16l.webp";
   }
@@ -112,7 +156,9 @@ export function getPartImageUrl(part: ElevatorPart): string {
     return "/images/components/cables-accessories.webp";
   }
 
-  // Category fallback mappings
+  if (part.images?.[0]) return part.images[0];
+
+  // 5. Category fallback mappings
   switch (part.categoryId) {
     case "traction-machines":
       return "/images/components/traction-systems.webp";
@@ -129,4 +175,21 @@ export function getPartImageUrl(part: ElevatorPart): string {
     default:
       return "/images/components/traction-systems.webp";
   }
+}
+
+/**
+ * Returns the resolved image URL for a variant, with fallback to parent part or null.
+ */
+export function getVariantImageUrl(variant?: PartVariant, part?: ElevatorPart): string | null {
+  if (variant?.storagePath) {
+    const url = getStorageImageUrl(variant.storagePath);
+    if (url) return url;
+  }
+  if (variant?.image) {
+    return variant.image;
+  }
+  if (part) {
+    return getPartImageUrl(part);
+  }
+  return null;
 }

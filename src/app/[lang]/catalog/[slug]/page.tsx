@@ -19,6 +19,7 @@ import {
 } from "@/lib/catalog";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { PartDetailActions } from "@/components/catalog/PartDetailActions";
+import { PartDetailGallery } from "@/components/catalog/PartDetailGallery";
 import { PartVariantMatrix } from "@/components/catalog/PartVariantMatrix";
 import { getProductJsonLd } from "@/lib/seo";
 import { getLocalizedAlternates } from "@/lib/seo";
@@ -101,15 +102,14 @@ export default async function PartDetailPage({
         </nav>
 
         <section className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-14">
-          <div className="relative aspect-square overflow-hidden bg-[#F1F3F5] lg:sticky lg:top-24 lg:col-span-5">
-            <Image
-              src={getPartImageUrl(part)}
-              alt={part.name[validLocale]}
-              fill
-              sizes="(max-width: 1024px) 100vw, 42vw"
-              className="object-contain p-8 sm:p-12"
-              priority
-            />
+          <div className="lg:sticky lg:top-24 lg:col-span-5">
+            <Suspense
+              fallback={
+                <div className="relative aspect-square overflow-hidden bg-[#F1F3F5] rounded-3xl animate-pulse" />
+              }
+            >
+              <PartDetailGallery part={part} lang={validLocale} />
+            </Suspense>
           </div>
 
           <div className="lg:col-span-7 lg:py-2">

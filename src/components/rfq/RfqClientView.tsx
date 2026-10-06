@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FileText,
   Trash2,
@@ -13,11 +14,11 @@ import {
   Printer,
   ArrowRight,
   ShieldCheck,
-  Layers,
   Calculator,
 } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
 import { useCart } from "@/context/CartContext";
+import { getPartImageUrl } from "@/lib/catalog";
 import { JupiterLogo } from "@/components/common/JupiterLogo";
 import { CardTexture } from "@/components/ui/card-texture";
 import { BorderBeam } from "@/components/ui/border-beam";
@@ -340,8 +341,14 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
                     className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                        <Layers className="w-6 h-6 text-slate-600" />
+                      <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 relative overflow-hidden p-1 shadow-2xs">
+                        <Image
+                          src={getPartImageUrl(item.part, item.selectedVariant)}
+                          alt={item.selectedVariant?.model ? `${item.part.name[lang]} (${item.selectedVariant.model})` : item.part.name[lang]}
+                          width={44}
+                          height={44}
+                          className="object-contain max-h-full max-w-full"
+                        />
                       </div>
                       <div>
                         <div className="flex flex-wrap items-center gap-2">

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Search, X, Layers, CornerDownLeft } from "lucide-react";
+import { Search, X, CornerDownLeft } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
-import { getAllParts } from "@/lib/catalog";
+import { getAllParts, getPartImageUrl } from "@/lib/catalog";
 import type { ElevatorPart } from "@/types/catalog";
 
 interface CommandPaletteProps {
@@ -199,8 +200,14 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 pr-2">
-                    <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                      <Layers className="w-5 h-5 text-slate-600" />
+                    <div className="w-11 h-11 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0 relative overflow-hidden p-1 shadow-2xs">
+                      <Image
+                        src={getPartImageUrl(part, matchingVariants[0] || part.variants?.[0])}
+                        alt={part.name[lang]}
+                        width={40}
+                        height={40}
+                        className="object-contain max-h-full max-w-full"
+                      />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">

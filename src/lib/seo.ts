@@ -80,6 +80,12 @@ export function getLocalBusinessJsonLd(locale: "ar" | "en") {
 }
 
 export function getProductJsonLd(part: ElevatorPart, locale: Locale) {
+  const imgUrl = getPartImageUrl(part);
+  const fullImgUrl =
+    imgUrl.startsWith("http://") || imgUrl.startsWith("https://")
+      ? imgUrl
+      : `https://www.jupiterelevators.com${imgUrl}`;
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -87,7 +93,7 @@ export function getProductJsonLd(part: ElevatorPart, locale: Locale) {
     description: part.description[locale],
     sku: part.sku,
     mpn: part.sku,
-    image: [`https://www.jupiterelevators.com${getPartImageUrl(part)}`],
+    image: [fullImgUrl],
     brand: {
       "@type": "Brand",
       name: part.compatibleBrands[0] || "Jupiter Elevators",

@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Search, Plus, Check, Layers } from "lucide-react";
 import type { ElevatorPart, PartVariant } from "@/types/catalog";
 import type { Locale, Dictionary } from "@/lib/i18n";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/components/ui/toast";
+import { getVariantImageUrl } from "@/lib/catalog";
 
 interface PartVariantMatrixProps {
   part: ElevatorPart;
@@ -25,6 +27,8 @@ export function PartVariantMatrix({
   selectedVariant,
   onSelectVariant,
 }: PartVariantMatrixProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const { addItem, items } = useCart();
   const { toast } = useToast();
   const [filterQuery, setFilterQuery] = useState("");
@@ -135,28 +139,54 @@ export function PartVariantMatrix({
               );
 
 
+              const variantImg = getVariantImageUrl(v, part);
+
+              const handleRowClick = () => {
+                onSelectVariant?.(v);
+                const params = new URLSearchParams(searchParams?.toString() || "");
+                params.set("model", v.model);
+                router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+              };
+
               return (
                 <tr
                   key={v.model}
-                  onClick={() => onSelectVariant?.(v)}
+                  onClick={handleRowClick}
                   className={`cursor-pointer transition-colors ${
                     isSelected
                       ? "bg-amber-50/80 font-medium"
                       : "hover:bg-slate-50/80"
                   }`}
                 >
-                  {/* Model Code */}
-                  <td className="px-4 py-3 font-mono font-bold text-slate-900 whitespace-nowrap">
-                    <span className="flex items-center gap-1.5">
-                      {isSelected && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#8A6428]" />
+                  {/* Model Code & Thumbnail */}
+                  <td className="px-4 py-2.5 font-mono font-bold text-slate-900 whitespace-nowrap">
+                    <span className="flex items-center gap-2.5">
+                      {isSelected ? (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#8A6428] shrink-0" />
+                      ) : (
+                        <span className="w-1.5 h-1.5 rounded-full bg-transparent shrink-0" />
+                      )}
+                      {variantImg ? (
+                        <div className="w-8 h-8 rounded-md bg-white border border-slate-200 overflow-hidden relative shrink-0 p-0.5 shadow-2xs">
+                          <Image
+                            src={variantImg}
+                            alt={v.model}
+                            width={28}
+                            height={28}
+                            className="object-contain w-full h-full"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 text-slate-400">
+                          <Layers className="w-4 h-4" />
+                        </div>
                       )}
                       <span>{v.model}</span>
                     </span>
                   </td>
 
                   {/* Type / Subseries */}
-                  <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
+                  <td className="px-4 py-2.5 text-slate-600 whitespace-nowrap">
                     {v.type || part.subcategory[lang]}
                   </td>
 

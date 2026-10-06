@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Plus, Minus, Check, MessageCircle, FileText, Share2, Layers } from "lucide-react";
 import type { ElevatorPart, PartVariant } from "@/types/catalog";
 import type { Locale, Dictionary } from "@/lib/i18n";
@@ -26,36 +26,27 @@ export function PartDetailActions({
   selectedVariant: externalVariant,
   onVariantChange,
 }: PartDetailActionsProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const { addItem, items } = useCart();
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const urlModel = searchParams?.get("model") || initialModel;
 
-  const [internalVariant, setInternalVariant] = useState<PartVariant | undefined>(() => {
+  const variants = useMemo(() => part.variants || [], [part.variants]);
+
+  const activeVariant = useMemo(() => {
+    if (externalVariant) return externalVariant;
     if (urlModel) {
-      const found = part.variants?.find((v) => v.model === urlModel);
+      const found = variants.find((v) => v.model === urlModel);
       if (found) return found;
     }
-    return part.variants?.[0];
-  });
-
-  useEffect(() => {
-    if (urlModel) {
-      const found = part.variants?.find((v) => v.model === urlModel);
-      if (found) {
-        setInternalVariant(found);
-        onVariantChange?.(found);
-      }
-    }
-  }, [urlModel, part.variants, onVariantChange]);
-
+    return variants[0];
+  }, [externalVariant, urlModel, variants]);
 
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const isRtl = lang === "ar";
-
-  const activeVariant = externalVariant || internalVariant;
-  const variants = part.variants || [];
 
   const isInCart = items.some(
     (item) =>
@@ -66,8 +57,10 @@ export function PartDetailActions({
   const handleVariantSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const found = variants.find((v) => v.model === e.target.value);
     if (found) {
-      setInternalVariant(found);
       onVariantChange?.(found);
+      const params = new URLSearchParams(searchParams?.toString() || "");
+      params.set("model", found.model);
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
 

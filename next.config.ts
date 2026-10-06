@@ -8,6 +8,15 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: "/v0/b/bewegen-elevators-ascent.firebasestorage.app/o/**",
+      },
+    ],
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

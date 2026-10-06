@@ -44,6 +44,9 @@ export function PartCard({ part, lang, dict, searchQuery }: PartCardProps) {
     : `/${lang}/catalog/${part.slug}`;
 
 
+  const activeVariant = matchedVariants[0] || part.variants?.[0];
+  const displayImageUrl = getPartImageUrl(part, activeVariant);
+
   const handleCopySku = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -59,11 +62,11 @@ export function PartCard({ part, lang, dict, searchQuery }: PartCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem(part, 1);
+    addItem(part, 1, undefined, matchedVariants[0]);
     setJustAdded(true);
     toast({
       title: isRtl ? "تمت الإضافة لسلة التسعير" : "Added to Quote Basket",
-      description: `[${part.sku}] ${part.name[lang]}`,
+      description: `[${matchedVariants[0]?.model || part.sku}] ${part.name[lang]}`,
       action: {
         label: isRtl ? "عرض السلة" : "Review RFQ",
         url: `/${lang}/rfq`,
@@ -74,8 +77,8 @@ export function PartCard({ part, lang, dict, searchQuery }: PartCardProps) {
 
   const whatsappInquiryUrl = `https://wa.me/966562614370?text=${encodeURIComponent(
     isRtl
-      ? `السلام عليكم، أود الاستفسار عن توفر وسعر القطعة التالية:\nالاسم: ${part.name.ar}\nرقم القطعة SKU: ${part.sku}`
-      : `Hello, I would like to inquire about the availability and quotation for:\nPart: ${part.name.en}\nSKU: ${part.sku}`
+      ? `السلام عليكم، أود الاستفسار عن توفر وسعر القطعة التالية:\nالاسم: ${part.name.ar}${matchedVariants[0] ? `\nالموديل: ${matchedVariants[0].model}` : ""}\nرقم القطعة SKU: ${part.sku}`
+      : `Hello, I would like to inquire about the availability and quotation for:\nPart: ${part.name.en}${matchedVariants[0] ? `\nModel: ${matchedVariants[0].model}` : ""}\nSKU: ${part.sku}`
   )}`;
 
   return (
@@ -106,8 +109,8 @@ export function PartCard({ part, lang, dict, searchQuery }: PartCardProps) {
         {/* Center Product Image */}
         <div className="relative w-full h-full flex items-center justify-center">
           <Image
-            src={getPartImageUrl(part)}
-            alt={part.name[lang]}
+            src={displayImageUrl}
+            alt={activeVariant?.model ? `${part.name[lang]} (${activeVariant.model})` : part.name[lang]}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
