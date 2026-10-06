@@ -18,9 +18,10 @@ interface PartCardProps {
   part: ElevatorPart;
   lang: Locale;
   dict: Dictionary;
+  searchQuery?: string;
 }
 
-export function PartCard({ part, lang, dict }: PartCardProps) {
+export function PartCard({ part, lang, dict, searchQuery }: PartCardProps) {
   const { addItem, items } = useCart();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
@@ -28,6 +29,20 @@ export function PartCard({ part, lang, dict }: PartCardProps) {
 
   const isRtl = lang === "ar";
   const isInCart = items.some((item) => item.part.id === part.id);
+
+  const q = searchQuery?.trim().toLowerCase() || "";
+  const matchedVariants = q
+    ? part.variants?.filter(
+        (v) =>
+          v.model.toLowerCase().includes(q) ||
+          (v.type && v.type.toLowerCase().includes(q))
+      ) || []
+    : [];
+
+  const targetHref = matchedVariants[0]
+    ? `/${lang}/catalog/${part.slug}?model=${encodeURIComponent(matchedVariants[0].model)}`
+    : `/${lang}/catalog/${part.slug}`;
+
 
   const handleCopySku = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -104,7 +119,7 @@ export function PartCard({ part, lang, dict }: PartCardProps) {
       <div className="p-3 pt-3.5 space-y-2.5 flex-1 flex flex-col justify-between">
         {/* Row 1: Title & Wholesale Badge */}
         <div className="flex items-start justify-between gap-2">
-          <Link href={`/${lang}/catalog/${part.slug}`} className="flex-1 min-w-0">
+          <Link href={targetHref} className="flex-1 min-w-0">
             <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#C59341] transition-colors truncate leading-tight">
               {part.name[lang]}
             </h3>
@@ -114,13 +129,35 @@ export function PartCard({ part, lang, dict }: PartCardProps) {
           </span>
         </div>
 
-        {part.variants && part.variants.length > 0 && (
-          <div className="flex items-center gap-1.5">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-amber-50 text-[#8A6428] border border-amber-200/70">
-              {isRtl ? `${part.variants.length} موديل متوفر` : `${part.variants.length} Models Available`}
+        {matchedVariants.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] font-mono font-semibold text-[#8A6428]">
+              {isRtl ? "الموديل المطابق:" : "Matched Model:"}
             </span>
+            {matchedVariants.slice(0, 2).map((mv) => (
+              <span
+                key={mv.model}
+                className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-900 border border-amber-200"
+              >
+                {mv.model}
+              </span>
+            ))}
+            {matchedVariants.length > 2 && (
+              <span className="text-[10px] font-mono text-slate-400">
+                +{matchedVariants.length - 2} {isRtl ? "إضافي" : "more"}
+              </span>
+            )}
           </div>
+        ) : (
+          part.variants && part.variants.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-amber-50 text-[#8A6428] border border-amber-200/70">
+                {isRtl ? `${part.variants.length} موديل متوفر` : `${part.variants.length} Models Available`}
+              </span>
+            </div>
+          )
         )}
+
 
 
         {/* Row 2: Rating & Compatible Brands / SKU */}

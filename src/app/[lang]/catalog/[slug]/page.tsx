@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -21,7 +22,6 @@ import { PartDetailActions } from "@/components/catalog/PartDetailActions";
 import { PartVariantMatrix } from "@/components/catalog/PartVariantMatrix";
 import { getProductJsonLd } from "@/lib/seo";
 import { getLocalizedAlternates } from "@/lib/seo";
-
 
 export function generateStaticParams() {
   const parts = getAllParts();
@@ -57,6 +57,8 @@ export default async function PartDetailPage({
   const dict = await getDictionary(validLocale);
   const part = getPartBySlug(slug);
   if (!part) notFound();
+
+
 
   const category = getCategoryById(part.categoryId);
   const relatedParts = getPartsByCategory(part.categoryId)
@@ -155,7 +157,13 @@ export default async function PartDetailPage({
             </dl>
 
             <div className="mt-6">
-              <PartDetailActions part={part} lang={validLocale} dict={dict} />
+              <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg" />}>
+                <PartDetailActions
+                  part={part}
+                  lang={validLocale}
+                  dict={dict}
+                />
+              </Suspense>
             </div>
           </div>
         </section>
@@ -183,8 +191,16 @@ export default async function PartDetailPage({
         )}
 
         {part.variants && part.variants.length > 0 && (
-          <PartVariantMatrix part={part} lang={validLocale} dict={dict} />
+          <Suspense fallback={<div className="h-32 bg-slate-100 animate-pulse rounded-xl" />}>
+            <PartVariantMatrix
+              part={part}
+              lang={validLocale}
+              dict={dict}
+            />
+          </Suspense>
         )}
+
+
 
         {relatedParts.length > 0 && (
           <section aria-labelledby="related-heading">

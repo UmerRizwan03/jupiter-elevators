@@ -528,8 +528,15 @@ export function CatalogClientView({
               {/* 3-Column Product Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {paginatedParts.map((part) => (
-                  <PartCard key={part.id} part={part} lang={lang} dict={dict} />
+                  <PartCard
+                    key={part.id}
+                    part={part}
+                    lang={lang}
+                    dict={dict}
+                    searchQuery={query}
+                  />
                 ))}
+
               </div>
 
               {/* Numbered Pagination (matching inspiration layout: ← Previous 1 2 3 ... 8 9 10 Next →) */}

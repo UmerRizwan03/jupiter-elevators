@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, Plus, Check, Layers } from "lucide-react";
 import type { ElevatorPart, PartVariant } from "@/types/catalog";
 import type { Locale, Dictionary } from "@/lib/i18n";
@@ -11,6 +12,7 @@ interface PartVariantMatrixProps {
   part: ElevatorPart;
   lang: Locale;
   dict: Dictionary;
+  initialModel?: string;
   selectedVariant?: PartVariant;
   onSelectVariant?: (variant: PartVariant) => void;
 }
@@ -19,6 +21,7 @@ export function PartVariantMatrix({
   part,
   lang,
   dict,
+  initialModel,
   selectedVariant,
   onSelectVariant,
 }: PartVariantMatrixProps) {
@@ -28,7 +31,13 @@ export function PartVariantMatrix({
   const [addedModel, setAddedModel] = useState<string | null>(null);
   const isRtl = lang === "ar";
 
+  const searchParams = useSearchParams();
+  const urlModel = searchParams?.get("model") || initialModel;
+
   const variants = useMemo(() => part.variants || [], [part.variants]);
+  const activeSelected = selectedVariant || (urlModel ? variants.find((v) => v.model === urlModel) : undefined);
+
+
 
 
   const filteredVariants = useMemo(() => {
@@ -119,11 +128,12 @@ export function PartVariantMatrix({
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredVariants.slice(0, 50).map((v) => {
-              const isSelected = selectedVariant?.model === v.model;
+              const isSelected = activeSelected?.model === v.model;
               const isAdded = addedModel === v.model;
               const isInCart = items.some(
                 (item) => item.part.id === part.id && item.selectedVariant?.model === v.model
               );
+
 
               return (
                 <tr

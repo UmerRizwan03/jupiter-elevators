@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import { useSearchParams } from "next/navigation";
 import { Plus, Minus, Check, MessageCircle, FileText, Share2, Layers } from "lucide-react";
 import type { ElevatorPart, PartVariant } from "@/types/catalog";
 import type { Locale, Dictionary } from "@/lib/i18n";
@@ -11,6 +13,7 @@ interface PartDetailActionsProps {
   part: ElevatorPart;
   lang: Locale;
   dict: Dictionary;
+  initialModel?: string;
   selectedVariant?: PartVariant;
   onVariantChange?: (variant: PartVariant) => void;
 }
@@ -19,14 +22,34 @@ export function PartDetailActions({
   part,
   lang,
   dict,
+  initialModel,
   selectedVariant: externalVariant,
   onVariantChange,
 }: PartDetailActionsProps) {
   const { addItem, items } = useCart();
   const { toast } = useToast();
-  const [internalVariant, setInternalVariant] = useState<PartVariant | undefined>(
-    part.variants?.[0]
-  );
+  const searchParams = useSearchParams();
+  const urlModel = searchParams?.get("model") || initialModel;
+
+  const [internalVariant, setInternalVariant] = useState<PartVariant | undefined>(() => {
+    if (urlModel) {
+      const found = part.variants?.find((v) => v.model === urlModel);
+      if (found) return found;
+    }
+    return part.variants?.[0];
+  });
+
+  useEffect(() => {
+    if (urlModel) {
+      const found = part.variants?.find((v) => v.model === urlModel);
+      if (found) {
+        setInternalVariant(found);
+        onVariantChange?.(found);
+      }
+    }
+  }, [urlModel, part.variants, onVariantChange]);
+
+
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const isRtl = lang === "ar";

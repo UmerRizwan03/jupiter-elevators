@@ -96,14 +96,21 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
       setSelectedIndex((prev) => (prev - 1 + filteredParts.length) % Math.max(1, filteredParts.length));
     } else if (e.key === "Enter" && filteredParts[selectedIndex]) {
       e.preventDefault();
-      handleSelect(filteredParts[selectedIndex]);
+      const p = filteredParts[selectedIndex];
+      const q = query.trim().toLowerCase();
+      const firstMatched = q ? p.variants?.find((v) => v.model.toLowerCase().includes(q)) : undefined;
+      handleSelect(p, firstMatched?.model);
     }
   };
 
-  const handleSelect = (part: ElevatorPart) => {
+  const handleSelect = (part: ElevatorPart, model?: string) => {
     setIsOpen(false);
-    router.push(`/${lang}/catalog/${part.slug}`);
+    const url = model
+      ? `/${lang}/catalog/${part.slug}?model=${encodeURIComponent(model)}`
+      : `/${lang}/catalog/${part.slug}`;
+    router.push(url);
   };
+
 
   if (!isOpen) return null;
 
@@ -173,10 +180,19 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
           {filteredParts.length > 0 ? (
             filteredParts.map((part, idx) => {
               const isSelected = idx === selectedIndex;
+              const q = query.trim().toLowerCase();
+              const matchingVariants = q
+                ? part.variants?.filter(
+                    (v) =>
+                      v.model.toLowerCase().includes(q) ||
+                      (v.type && v.type.toLowerCase().includes(q))
+                  ) || []
+                : [];
+
               return (
                 <div
                   key={part.id}
-                  onClick={() => handleSelect(part)}
+                  onClick={() => handleSelect(part, matchingVariants[0]?.model)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${
                     isSelected ? "bg-slate-100" : "hover:bg-slate-50"
@@ -198,8 +214,34 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
                       <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate mt-0.5">
                         {part.name[lang]}
                       </h4>
+                      {matchingVariants.length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                          <span className="text-[10px] font-mono font-semibold text-[#8A6428]">
+                            {isRtl ? "الموديلات المطابقة:" : "Matched Models:"}
+                          </span>
+                          {matchingVariants.slice(0, 3).map((mv) => (
+                            <button
+                              key={mv.model}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelect(part, mv.model);
+                              }}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 transition-colors"
+                            >
+                              {mv.model}
+                            </button>
+                          ))}
+                          {matchingVariants.length > 3 && (
+                            <span className="text-[10px] font-mono text-slate-400">
+                              +{matchingVariants.length - 3} {isRtl ? "إضافي" : "more"}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
+
 
                   <div className="flex items-center gap-2 shrink-0">
                     {part.inStock ? (
