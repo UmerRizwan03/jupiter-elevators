@@ -68,13 +68,19 @@ export function filterParts(options: FilterOptions): ElevatorPart[] {
       const matchNameAr = part.name.ar.toLowerCase().includes(q);
       const matchSubEn = part.subcategory.en.toLowerCase().includes(q);
       const matchSubAr = part.subcategory.ar.toLowerCase().includes(q);
+      const matchVariant = part.variants?.some(
+        (v) =>
+          v.model.toLowerCase().includes(q) ||
+          (v.type && v.type.toLowerCase().includes(q))
+      );
 
-      if (!matchSku && !matchNameEn && !matchNameAr && !matchSubEn && !matchSubAr) {
+      if (!matchSku && !matchNameEn && !matchNameAr && !matchSubEn && !matchSubAr && !matchVariant) {
         return false;
       }
     }
 
     return true;
+
   });
 }
 

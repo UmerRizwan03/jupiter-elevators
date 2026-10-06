@@ -18,8 +18,10 @@ import {
 } from "@/lib/catalog";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { PartDetailActions } from "@/components/catalog/PartDetailActions";
+import { PartVariantMatrix } from "@/components/catalog/PartVariantMatrix";
 import { getProductJsonLd } from "@/lib/seo";
 import { getLocalizedAlternates } from "@/lib/seo";
+
 
 export function generateStaticParams() {
   const parts = getAllParts();
@@ -178,6 +180,10 @@ export default async function PartDetailPage({
               ))}
             </dl>
           </section>
+        )}
+
+        {part.variants && part.variants.length > 0 && (
+          <PartVariantMatrix part={part} lang={validLocale} dict={dict} />
         )}
 
         {relatedParts.length > 0 && (

@@ -114,6 +114,15 @@ export function PartCard({ part, lang, dict }: PartCardProps) {
           </span>
         </div>
 
+        {part.variants && part.variants.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-amber-50 text-[#8A6428] border border-amber-200/70">
+              {isRtl ? `${part.variants.length} موديل متوفر` : `${part.variants.length} Models Available`}
+            </span>
+          </div>
+        )}
+
+
         {/* Row 2: Rating & Compatible Brands / SKU */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-1 text-[11px]">

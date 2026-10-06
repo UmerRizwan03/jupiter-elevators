@@ -103,7 +103,8 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
       if (notes) message += `• ملاحظات: ${notes}\n`;
       message += `\n*قائمة القطع المطلوبة (${totalItemsCount} قطعة):*\n`;
       items.forEach((item, index) => {
-        message += `${index + 1}. [${item.part.sku}] ${item.part.name.ar} - الكمية: ${item.quantity}\n`;
+        const variantSuffix = item.selectedVariant ? ` [الموديل: ${item.selectedVariant.model}]` : "";
+        message += `${index + 1}. [${item.part.sku}] ${item.part.name.ar}${variantSuffix} - الكمية: ${item.quantity}\n`;
       });
       message += `\nيرجى تزويدنا بعرض السعر الرسمي وموعد التوريد. شكراً لكم.`;
     } else {
@@ -119,7 +120,8 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
       if (notes) message += `• Notes: ${notes}\n`;
       message += `\n*Bill of Materials (${totalItemsCount} items):*\n`;
       items.forEach((item, index) => {
-        message += `${index + 1}. [${item.part.sku}] ${item.part.name.en} - Qty: ${item.quantity}\n`;
+        const variantSuffix = item.selectedVariant ? ` [Model: ${item.selectedVariant.model}]` : "";
+        message += `${index + 1}. [${item.part.sku}] ${item.part.name.en}${variantSuffix} - Qty: ${item.quantity}\n`;
       });
       message += `\nPlease provide official commercial quotation and delivery timeframe. Thank you.`;
     }
@@ -133,13 +135,19 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
         body: JSON.stringify({
           kind: "rfq", locale: lang, reference: refCode, company: companyName,
           contactPerson, phone, email, city: cityName, projectRef, notes, website,
-          items: items.map(({ part, quantity }) => ({ sku: part.sku, name: part.name[lang], quantity })),
+          items: items.map(({ part, quantity, selectedVariant }) => ({
+            sku: part.sku,
+            name: `${part.name[lang]}${selectedVariant ? ` (${selectedVariant.model})` : ""}`,
+            variant: selectedVariant?.model,
+            quantity
+          })),
         }),
       });
       emailSent = response.ok;
     } catch {
       emailSent = false;
     }
+
     const whatsappUrl = `https://wa.me/966562614370?text=${encodeURIComponent(message)}`;
     if (whatsappWindow) whatsappWindow.location.href = whatsappUrl;
     setEmailDelivery(emailSent ? "sent" : "fallback");
@@ -239,11 +247,21 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
               </div>
               <div className="divide-y divide-slate-100 bg-white">
                 {items.map((item) => (
-                  <div key={item.part.id} className="p-4 flex items-center justify-between text-xs">
+                  <div
+                    key={`${item.part.id}-${item.selectedVariant?.model || "default"}`}
+                    className="p-4 flex items-center justify-between text-xs"
+                  >
                     <div>
-                      <span className="font-mono font-bold text-slate-900 block">
-                        [{item.part.sku}]
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-slate-900 block">
+                          [{item.part.sku}]
+                        </span>
+                        {item.selectedVariant && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-[#8A6428] border border-amber-200">
+                            {item.selectedVariant.model}
+                          </span>
+                        )}
+                      </div>
                       <span className="text-slate-800 font-medium mt-0.5 block">
                         {item.part.name[lang]}
                       </span>
@@ -253,6 +271,7 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
                     </span>
                   </div>
                 ))}
+
               </div>
             </div>
           </div>
@@ -313,69 +332,87 @@ export function RfqClientView({ lang, dict }: RfqClientViewProps) {
             </div>
 
             <div className="divide-y divide-slate-100">
-              {items.map((item) => (
-                <div
-                  key={item.part.id}
-                  className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                      <Layers className="w-6 h-6 text-slate-600" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-900 text-white">
-                          {item.part.sku}
-                        </span>
-                        <span className="text-[10px] font-mono text-slate-400">
-                          {"// "}{item.part.subcategory[lang]}
-                        </span>
+              {items.map((item) => {
+                const itemKey = `${item.part.id}-${item.selectedVariant?.model || "default"}`;
+                return (
+                  <div
+                    key={itemKey}
+                    className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                        <Layers className="w-6 h-6 text-slate-600" />
                       </div>
-                      <Link
-                        href={`/${lang}/catalog/${item.part.slug}`}
-                        className="text-xs sm:text-sm font-bold text-slate-900 hover:text-[#C59341] transition-colors mt-0.5 block"
-                      >
-                        {item.part.name[lang]}
-                      </Link>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-900 text-white">
+                            {item.part.sku}
+                          </span>
+                          {item.selectedVariant && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-[#8A6428] border border-amber-200">
+                              {item.selectedVariant.model}
+                            </span>
+                          )}
+                          <span className="text-[10px] font-mono text-slate-400">
+                            {"// "}{item.part.subcategory[lang]}
+                          </span>
+                        </div>
+                        <Link
+                          href={`/${lang}/catalog/${item.part.slug}`}
+                          className="text-xs sm:text-sm font-bold text-slate-900 hover:text-[#C59341] transition-colors mt-0.5 block"
+                        >
+                          {item.part.name[lang]}
+                        </Link>
+                        {item.selectedVariant?.specifications && (
+                          <div className="text-[10px] font-mono text-slate-500 mt-0.5">
+                            {Object.entries(item.selectedVariant.specifications).slice(0, 2).map(([k, v]) => (
+                              <span key={k} className="mr-2 rtl:mr-0 rtl:ml-2">
+                                {k.replace(/_/g, " ")}: {Array.isArray(v) ? v.join("/") : v}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-                    {/* Stepper */}
-                    <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50/90 h-9 px-1">
+                    <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                      {/* Stepper */}
+                      <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50/90 h-9 px-1">
+                        <button
+                          type="button"
+                          aria-label={isRtl ? `تقليل كمية ${item.part.name.ar}` : `Decrease quantity of ${item.part.name.en}`}
+                          onClick={() => updateQuantity(item.part.id, item.quantity - 1, item.selectedVariant?.model)}
+                          className="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="w-8 text-center text-xs font-mono font-bold text-slate-900">
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label={isRtl ? `زيادة كمية ${item.part.name.ar}` : `Increase quantity of ${item.part.name.en}`}
+                          onClick={() => updateQuantity(item.part.id, item.quantity + 1, item.selectedVariant?.model)}
+                          className="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
                       <button
                         type="button"
-                        aria-label={isRtl ? `تقليل كمية ${item.part.name.ar}` : `Decrease quantity of ${item.part.name.en}`}
-                        onClick={() => updateQuantity(item.part.id, item.quantity - 1)}
-                        className="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+                        aria-label={isRtl ? `حذف ${item.part.name.ar}` : `Remove ${item.part.name.en}`}
+                        onClick={() => removeItem(item.part.id, item.selectedVariant?.model)}
+                        className="p-2 text-slate-400 hover:text-rose-600 transition-colors"
+                        title="Remove item"
                       >
-                        <Minus className="w-3.5 h-3.5" />
-                      </button>
-                      <span className="w-8 text-center text-xs font-mono font-bold text-slate-900">
-                        {item.quantity}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label={isRtl ? `زيادة كمية ${item.part.name.ar}` : `Increase quantity of ${item.part.name.en}`}
-                        onClick={() => updateQuantity(item.part.id, item.quantity + 1)}
-                        className="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
-
-                    <button
-                      type="button"
-                      aria-label={isRtl ? `حذف ${item.part.name.ar}` : `Remove ${item.part.name.en}`}
-                      onClick={() => removeItem(item.part.id)}
-                      className="p-2 text-slate-400 hover:text-rose-600 transition-colors"
-                      title="Remove item"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
+
             </div>
           </div>
         </div>

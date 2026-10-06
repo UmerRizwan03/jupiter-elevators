@@ -112,12 +112,13 @@ export function LineCardModal({ lang }: LineCardModalProps) {
               {/* Company Summary */}
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
                 <strong className="text-slate-900 block mb-1">
-                  {isRtl ? "نطاق التوريد والجاهزية اللوجستية:" : "Supply Scope & Logistics Readiness:"}
+                  {isRtl ? "نطاق التوريد والجاهزية اللوجستية (790+ موديل):" : "Supply Scope & Logistics Readiness (790+ Models):"}
                 </strong>
                 {isRtl
-                  ? "تعتبر شركة سبيس للمقاولات الصناعية (جوبيتر للمصاعد) مركز التوزيع المباشر لقطع غيار ومكونات المصاعد لشركات الصيانة والمصانع في كافة مناطق المملكة العربية السعودية، مع مخزون استراتيجي جاهز للشحن خلال 24 ساعة لكافة المدن."
-                  : "Jupiter Elevators (Space Industrial Cont. Co.) operates as the central spare parts distribution hub for elevator maintenance operators and lift builders across Saudi Arabia, maintaining strategic inventory ready for 24h dispatch nationwide."}
+                  ? "تعتبر شركة سبيس للمقاولات الصناعية (جوبيتر للمصاعد) مركز التوزيع المباشر لأكثر من 790 موديلاً صناعياً معتمداً لقطع غيار ومكونات المصاعد لشركات الصيانة والمصانع في كافة مناطق المملكة العربية السعودية، مع مخزون استراتيجي جاهز للشحن خلال 24 ساعة لكافة المدن."
+                  : "Jupiter Elevators (Space Industrial Cont. Co.) operates as the central spare parts distribution hub for over 790 certified factory elevator models and components across Saudi Arabia, maintaining strategic inventory ready for 24h dispatch nationwide."}
               </div>
+
 
               {/* Subsystems Categories Grid */}
               <div className="space-y-3">

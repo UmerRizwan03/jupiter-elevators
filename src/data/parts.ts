@@ -1,6 +1,7 @@
 import type { ElevatorPart } from "@/types/catalog";
+import { partVariantsMap } from "@/data/catalogVariants";
 
-export const parts: ElevatorPart[] = [
+const baseParts: ElevatorPart[] = [
   // ==========================================
   // 1. ELEVATOR CONTROLLERS (لوحات وأنظمة التحكم)
   // ==========================================
@@ -1468,3 +1469,9 @@ export const parts: ElevatorPart[] = [
     featured: false,
   },
 ];
+
+export const parts: ElevatorPart[] = baseParts.map((part) => {
+  const variants = partVariantsMap[part.id];
+  return variants && variants.length > 0 ? { ...part, variants } : part;
+});
+

@@ -75,7 +75,12 @@ export function CommandPalette({ lang }: CommandPaletteProps) {
           p.name.ar.toLowerCase().includes(q) ||
           p.subcategory.en.toLowerCase().includes(q) ||
           p.subcategory.ar.toLowerCase().includes(q) ||
-          p.compatibleBrands.some((b) => b.toLowerCase().includes(q))
+          p.compatibleBrands.some((b) => b.toLowerCase().includes(q)) ||
+          p.variants?.some(
+            (v) =>
+              v.model.toLowerCase().includes(q) ||
+              (v.type && v.type.toLowerCase().includes(q))
+          )
         );
       })
       .slice(0, 8);

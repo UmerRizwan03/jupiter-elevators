@@ -13,6 +13,17 @@ export interface ElevatorCategory {
   popular?: boolean;
 }
 
+export interface PartVariant {
+  model: string;
+  name?: LocalizedString;
+  type?: string;
+  specifications?: Record<string, string | number | (string | number)[]>;
+  storagePath?: string;
+  image?: string;
+  inStock?: boolean;
+}
+
+
 export interface ElevatorPart {
   id: string;
   sku: string;
@@ -28,10 +39,13 @@ export interface ElevatorPart {
   images: string[];
   datasheetUrl?: string;
   featured?: boolean;
+  variants?: PartVariant[];
 }
 
 export interface RfqCartItem {
   part: ElevatorPart;
+  selectedVariant?: PartVariant;
   quantity: number;
   notes?: string;
 }
+
