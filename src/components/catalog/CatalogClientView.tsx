@@ -138,7 +138,21 @@ export function CatalogClientView({
           vvvf: ["vvvf"],
           micro: ["microprocessor", "micro processor", "controller"],
         };
-        if (!modelTerms[selectedModel]?.some((term) => searchable.includes(term))) return false;
+        const terms = modelTerms[selectedModel.toLowerCase()];
+        if (terms) {
+          const matchTerms =
+            terms.some((term) => searchable.includes(term)) ||
+            part.variants?.some((v) =>
+              terms.some((t) => v.model.toLowerCase().includes(t) || v.type?.toLowerCase().includes(t))
+            );
+          if (!matchTerms) return false;
+        } else {
+          const sm = selectedModel.toLowerCase();
+          const matchSpecificModel = part.variants?.some(
+            (v) => v.model.toLowerCase().includes(sm) || v.type?.toLowerCase().includes(sm)
+          );
+          if (!matchSpecificModel && !searchable.includes(sm)) return false;
+        }
       }
 
       if (query.trim() !== "") {
@@ -148,7 +162,12 @@ export function CatalogClientView({
         const matchNameAr = part.name.ar.toLowerCase().includes(q);
         const matchSubEn = part.subcategory.en.toLowerCase().includes(q);
         const matchSubAr = part.subcategory.ar.toLowerCase().includes(q);
-        if (!matchSku && !matchNameEn && !matchNameAr && !matchSubEn && !matchSubAr) {
+        const matchVariant = part.variants?.some(
+          (v) =>
+            v.model.toLowerCase().includes(q) ||
+            (v.type && v.type.toLowerCase().includes(q))
+        );
+        if (!matchSku && !matchNameEn && !matchNameAr && !matchSubEn && !matchSubAr && !matchVariant) {
           return false;
         }
       }
