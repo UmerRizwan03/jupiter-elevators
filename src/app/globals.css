@@ -68,7 +68,7 @@ body {
   background: #94a3b8;
 }
 
-/* Print optimizations for RFQ quotation summary */
+/* Print optimizations for RFQ quotation summary and Line Card modal */
 @media print {
   header,
   footer,
@@ -83,5 +83,26 @@ body {
 
   .print-only {
     display: block !important;
+  }
+
+  body.line-card-modal-open > *:not(#line-card-modal-root) {
+    display: none !important;
+  }
+
+  #line-card-modal-root {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  #line-card-modal-root > div {
+    box-shadow: none !important;
+    border: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }

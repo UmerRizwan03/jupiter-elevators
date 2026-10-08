@@ -61,3 +61,4 @@ export function PartDetailGallery({ part, lang }: PartDetailGalleryProps) {
     </div>
   );
 }
+

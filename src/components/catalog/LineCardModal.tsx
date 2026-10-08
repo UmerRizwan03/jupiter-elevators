@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Download, FileText, Printer, X } from "lucide-react";
 import { JupiterLogo } from "@/components/common/JupiterLogo";
 import type { Locale } from "@/lib/i18n";
@@ -12,10 +13,15 @@ interface LineCardModalProps {
 
 export function LineCardModal({ lang }: LineCardModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const isRtl = lang === "ar";
   const categories = getAllCategories();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handlePrint = () => {
     window.print();
@@ -26,6 +32,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
     const triggerElement = triggerRef.current;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    document.body.classList.add("line-card-modal-open");
     dialogRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setIsOpen(false);
@@ -42,6 +49,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.classList.remove("line-card-modal-open");
       document.removeEventListener("keydown", onKeyDown);
       triggerElement?.focus();
     };
@@ -56,23 +64,29 @@ export function LineCardModal({ lang }: LineCardModalProps) {
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200/90 text-slate-800 hover:border-[#C59341] hover:text-[#C59341] transition-all text-xs font-mono font-bold shadow-2xs group"
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200/90 text-slate-800 hover:border-[#C59341] hover:text-[#C59341] transition-all text-xs font-mono font-bold shadow-2xs group cursor-pointer"
       >
         <FileText className="w-4 h-4 text-[#C59341]" />
         <span>{isRtl ? "تحميل دليل القطع 2026 (Line Card)" : "2026 LINE CARD (PDF)"}</span>
         <Download className="w-3.5 h-3.5 opacity-60 group-hover:translate-y-0.5 transition-transform" />
       </button>
 
-      {/* Modal Dialog */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsOpen(false); }}>
+      {/* Modal Dialog Portaled to document.body */}
+      {isOpen && mounted && createPortal(
+        <div
+          id="line-card-modal-root"
+          className="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setIsOpen(false);
+          }}
+        >
           <div
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="line-card-title"
             tabIndex={-1}
-            className="w-full max-w-4xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 sm:p-10 relative my-8 max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-4xl bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 sm:p-10 relative my-8 max-h-[90vh] overflow-y-auto z-[101] text-slate-900 animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -80,7 +94,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
               type="button"
               aria-label={isRtl ? "إغلاق نافذة الدليل" : "Close line card dialog"}
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors print:hidden cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -118,7 +132,6 @@ export function LineCardModal({ lang }: LineCardModalProps) {
                   ? "تعتبر شركة سبيس للمقاولات الصناعية (جوبيتر للمصاعد) مركز التوزيع المباشر لأكثر من 790 موديلاً صناعياً معتمداً لقطع غيار ومكونات المصاعد لشركات الصيانة والمصانع في كافة مناطق المملكة العربية السعودية، مع مخزون استراتيجي جاهز للشحن خلال 24 ساعة لكافة المدن."
                   : "Jupiter Elevators (Space Industrial Cont. Co.) operates as the central spare parts distribution hub for over 790 certified factory elevator models and components across Saudi Arabia, maintaining strategic inventory ready for 24h dispatch nationwide."}
               </div>
-
 
               {/* Subsystems Categories Grid */}
               <div className="space-y-3">
@@ -170,7 +183,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
                 <div className="text-xs font-mono text-slate-500">
                   <span>DISPATCH HOTLINE: +966 562614370 | sales@jupiterelevators.com</span>
                 </div>
@@ -179,7 +192,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
                   <button
                     type="button"
                     onClick={handlePrint}
-                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono font-bold text-xs transition-colors shadow-xs"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono font-bold text-xs transition-colors shadow-xs cursor-pointer"
                   >
                     <Printer className="w-4 h-4 text-[#C59341]" />
                     <span>{isRtl ? "طباعة / حفظ كـ PDF" : "PRINT / SAVE AS PDF"}</span>
@@ -188,7 +201,7 @@ export function LineCardModal({ lang }: LineCardModalProps) {
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-mono text-xs font-bold transition-colors"
+                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-mono text-xs font-bold transition-colors cursor-pointer"
                   >
                     {isRtl ? "إغلاق" : "CLOSE"}
                   </button>
@@ -196,9 +209,9 @@ export function LineCardModal({ lang }: LineCardModalProps) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
 }
-
